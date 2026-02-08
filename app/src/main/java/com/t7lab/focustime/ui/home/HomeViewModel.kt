@@ -23,7 +23,9 @@ data class HomeUiState(
     val selectedDurationMs: Long? = null,
     val remainingTimeMs: Long = 0L,
     val isSessionActive: Boolean = false,
-    val passwordUnlockResult: PasswordUnlockResult? = null
+    val passwordUnlockResult: PasswordUnlockResult? = null,
+    val showSessionComplete: Boolean = false,
+    val completedDurationMs: Long = 0L,
 )
 
 enum class PasswordUnlockResult {
@@ -47,6 +49,7 @@ class HomeViewModel @Inject constructor(
         observeSession()
         observeBlocklist()
         startCountdownTimer()
+        checkPendingCelebration()
     }
 
     private fun observeSession() {
@@ -68,6 +71,18 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun checkPendingCelebration() {
+        viewModelScope.launch {
+            val completedMs = preferencesManager.getLastCompletedDuration()
+            if (completedMs > 0) {
+                _uiState.value = _uiState.value.copy(
+                    showSessionComplete = true,
+                    completedDurationMs = completedMs
+                )
+            }
+        }
+    }
+
     private fun startCountdownTimer() {
         viewModelScope.launch {
             while (isActive) {
@@ -75,12 +90,15 @@ class HomeViewModel @Inject constructor(
                 if (session != null && session.isActive) {
                     val remaining = session.endTime - System.currentTimeMillis()
                     if (remaining <= 0) {
-                        // Session expired
+                        val durationMs = session.durationMs
                         sessionManager.endSession()
+                        preferencesManager.setLastCompletedDuration(durationMs)
                         _uiState.value = _uiState.value.copy(
                             remainingTimeMs = 0L,
                             isSessionActive = false,
-                            activeSession = null
+                            activeSession = null,
+                            showSessionComplete = true,
+                            completedDurationMs = durationMs
                         )
                     } else {
                         _uiState.value = _uiState.value.copy(remainingTimeMs = remaining)
@@ -91,6 +109,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun dismissSessionComplete() {
+        viewModelScope.launch {
+            preferencesManager.clearLastCompletedDuration()
+        }
+        _uiState.value = _uiState.value.copy(
+            showSessionComplete = false,
+            completedDurationMs = 0L
+        )
+    }
+
     fun selectDuration(durationMs: Long) {
         _uiState.value = _uiState.value.copy(selectedDurationMs = durationMs)
     }
@@ -98,15 +126,7 @@ class HomeViewModel @Inject constructor(
     fun startSession(onVpnPermissionNeeded: () -> Unit) {
         val duration = _uiState.value.selectedDurationMs ?: return
         viewModelScope.launch {
-            val result = sessionManager.startSession(duration)
-            when (result) {
-                is SessionManager.StartSessionResult.Success -> {
-                    // Session started, UI will update via Flow
-                }
-                is SessionManager.StartSessionResult.NoItemsToBlock -> {
-                    // No items - shouldn't happen if UI prevents it
-                }
-            }
+            sessionManager.startSession(duration)
         }
     }
 

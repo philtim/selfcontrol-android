@@ -1,8 +1,6 @@
 package com.t7lab.focustime
 
 import android.Manifest
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.VpnService
@@ -13,25 +11,38 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.t7lab.focustime.service.FocusDeviceAdminReceiver
+import com.t7lab.focustime.data.preferences.PreferencesManager
 import com.t7lab.focustime.ui.apppicker.AppPickerScreen
 import com.t7lab.focustime.ui.home.HomeScreen
 import com.t7lab.focustime.ui.navigation.Routes
+import com.t7lab.focustime.ui.onboarding.OnboardingScreen
 import com.t7lab.focustime.ui.settings.SettingsScreen
 import com.t7lab.focustime.ui.theme.FocusTimeTheme
 import com.t7lab.focustime.ui.urlmanager.UrlManagerScreen
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject lateinit var preferencesManager: PreferencesManager
 
     private val vpnPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -41,10 +52,14 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission()
     ) { /* Notification permission result handled */ }
 
+    private var onboardingComplete by mutableStateOf<Boolean?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        requestRequiredPermissions()
+
+        // Check onboarding status before setting content
+        onboardingComplete = runBlocking { preferencesManager.isOnboardingComplete() }
 
         setContent {
             FocusTimeTheme {
@@ -52,13 +67,60 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val isComplete = onboardingComplete ?: return@Surface
                     val navController = rememberNavController()
+                    val startDest = if (isComplete) Routes.HOME else Routes.ONBOARDING
+
+                    val animDuration = 300
 
                     NavHost(
                         navController = navController,
-                        startDestination = Routes.HOME
+                        startDestination = startDest,
+                        enterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                                animationSpec = tween(animDuration)
+                            ) + fadeIn(tween(animDuration))
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                                animationSpec = tween(animDuration)
+                            ) + fadeOut(tween(animDuration))
+                        },
+                        popEnterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                                animationSpec = tween(animDuration)
+                            ) + fadeIn(tween(animDuration))
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                                animationSpec = tween(animDuration)
+                            ) + fadeOut(tween(animDuration))
+                        }
                     ) {
+                        composable(
+                            Routes.ONBOARDING,
+                            enterTransition = { fadeIn(tween(animDuration)) },
+                            exitTransition = { fadeOut(tween(animDuration)) }
+                        ) {
+                            OnboardingScreen(
+                                onComplete = {
+                                    runBlocking { preferencesManager.completeOnboarding() }
+                                    onboardingComplete = true
+                                    navController.navigate(Routes.HOME) {
+                                        popUpTo(Routes.ONBOARDING) { inclusive = true }
+                                    }
+                                }
+                            )
+                        }
                         composable(Routes.HOME) {
+                            // Request permissions contextually on first arriving at home
+                            LaunchedEffect(Unit) {
+                                requestContextualPermissions()
+                            }
                             HomeScreen(
                                 onNavigateToAppPicker = {
                                     navController.navigate(Routes.APP_PICKER)
@@ -95,8 +157,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun requestRequiredPermissions() {
-        // Request notification permission on Android 13+
+    private fun requestContextualPermissions() {
+        // Only request notification permission on first visit — less intrusive
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -106,13 +168,15 @@ class MainActivity : ComponentActivity() {
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
+    }
 
-        // Check usage stats permission
+    fun requestUsageStatsPermission() {
         if (!hasUsageStatsPermission()) {
             startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
         }
+    }
 
-        // Check overlay permission
+    fun requestOverlayPermission() {
         if (!Settings.canDrawOverlays(this)) {
             val intent = Intent(
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -129,7 +193,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun hasUsageStatsPermission(): Boolean {
+    fun hasUsageStatsPermission(): Boolean {
         val appOps = getSystemService(APP_OPS_SERVICE) as android.app.AppOpsManager
         val mode = appOps.unsafeCheckOpNoThrow(
             android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
@@ -137,5 +201,9 @@ class MainActivity : ComponentActivity() {
             packageName
         )
         return mode == android.app.AppOpsManager.MODE_ALLOWED
+    }
+
+    fun hasOverlayPermission(): Boolean {
+        return Settings.canDrawOverlays(this)
     }
 }

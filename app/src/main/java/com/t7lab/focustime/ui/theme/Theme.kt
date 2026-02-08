@@ -70,6 +70,7 @@ fun FocusTimeTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        typography = FocusTimeTypography,
         content = content
     )
 }

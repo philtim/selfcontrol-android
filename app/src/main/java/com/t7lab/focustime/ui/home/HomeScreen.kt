@@ -1,6 +1,11 @@
 package com.t7lab.focustime.ui.home
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +25,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,8 +39,8 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -47,8 +54,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,6 +65,9 @@ import com.t7lab.focustime.data.db.BlockedItem
 import com.t7lab.focustime.data.db.BlockedItemType
 import com.t7lab.focustime.ui.components.BlockedItemChip
 import com.t7lab.focustime.ui.components.DurationPicker
+import com.t7lab.focustime.ui.components.RotatingQuoteCard
+import com.t7lab.focustime.ui.components.SessionCompleteOverlay
+import com.t7lab.focustime.ui.theme.TimerTypography
 import com.t7lab.focustime.util.formatDuration
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -69,16 +81,24 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val haptic = LocalHapticFeedback.current
 
     var showPasswordDialog by remember { mutableStateOf(false) }
+
+    // Session completion celebration overlay
+    if (uiState.showSessionComplete) {
+        SessionCompleteOverlay(
+            completedDurationMs = uiState.completedDurationMs,
+            onDismiss = { viewModel.dismissSessionComplete() }
+        )
+        return
+    }
 
     Scaffold(
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text(
-                        if (uiState.isSessionActive) "Focus Active" else "FocusTime"
-                    )
+                    Text(if (uiState.isSessionActive) "Focus Active" else "FocusTime")
                 },
                 actions = {
                     if (!uiState.isSessionActive) {
@@ -116,7 +136,10 @@ fun HomeScreen(
                     onAddApps = onNavigateToAppPicker,
                     onAddUrls = onNavigateToUrlManager,
                     onRemoveItem = viewModel::removeItem,
-                    onStartFocus = { viewModel.startSession(onVpnPermissionNeeded) }
+                    onStartFocus = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        viewModel.startSession(onVpnPermissionNeeded)
+                    }
                 )
             }
 
@@ -156,12 +179,16 @@ private fun ActiveSessionContent(
         label = "progress"
     )
 
-    // Timer card
+    val appCount = blockedItems.count { it.type == BlockedItemType.APP }
+    val urlCount = blockedItems.count { it.type == BlockedItemType.URL }
+
+    // Immersive timer card
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
@@ -169,56 +196,68 @@ private fun ActiveSessionContent(
                 .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Icon(
+                Icons.Default.Shield,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(36.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Box(contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
                     progress = { animatedProgress },
-                    modifier = Modifier.size(180.dp),
-                    strokeWidth = 8.dp,
-                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                    modifier = Modifier.size(200.dp),
+                    strokeWidth = 10.dp,
+                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Time Remaining",
-                        style = MaterialTheme.typography.bodySmall,
+                        text = formatDuration(remainingTimeMs),
+                        style = TimerTypography,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
-                        text = formatDuration(remainingTimeMs),
-                        style = MaterialTheme.typography.displayMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        text = "remaining",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                     )
                 }
             }
-        }
-    }
 
-    // Blocked items
-    if (blockedItems.isNotEmpty()) {
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Blocked Items",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    blockedItems.forEach { item ->
-                        BlockedItemChip(item = item)
-                    }
-                }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LinearProgressIndicator(
+                progress = { animatedProgress },
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            val summary = buildString {
+                if (appCount > 0) append("$appCount app${if (appCount > 1) "s" else ""}")
+                if (appCount > 0 && urlCount > 0) append(", ")
+                if (urlCount > 0) append("$urlCount URL${if (urlCount > 1) "s" else ""}")
+                append(" blocked")
             }
+            Text(
+                text = summary,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+            )
         }
     }
 
-    // Unlock button
-    OutlinedButton(
+    // Motivational quote
+    RotatingQuoteCard()
+
+    // Unlock button — subtle, pushed down
+    Spacer(modifier = Modifier.height(16.dp))
+    TextButton(
         onClick = onUnlockClick,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -228,7 +267,7 @@ private fun ActiveSessionContent(
             modifier = Modifier.size(ButtonDefaults.IconSize)
         )
         Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-        Text("Unlock with Password")
+        Text("Unlock with password")
     }
 }
 
@@ -245,9 +284,57 @@ private fun NewSessionContent(
 ) {
     val apps = blockedItems.filter { it.type == BlockedItemType.APP }
     val urls = blockedItems.filter { it.type == BlockedItemType.URL }
+    val isReady = blockedItems.isNotEmpty() && selectedDurationMs != null
+
+    // Hero Start Focus button with pulse animation
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = if (isReady) 1.02f else 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulse_scale"
+    )
+
+    Button(
+        onClick = onStartFocus,
+        enabled = isReady,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .scale(pulseScale),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = if (isReady) 6.dp else 0.dp
+        )
+    ) {
+        Icon(
+            if (isReady) Icons.Default.PlayArrow else Icons.Default.Lock,
+            contentDescription = null,
+            modifier = Modifier.size(ButtonDefaults.IconSize)
+        )
+        Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+        Text(
+            text = if (isReady) "Start Focus" else "Add items to start",
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+
+    // Duration picker — inline
+    DurationPicker(
+        selectedDurationMs = selectedDurationMs,
+        onDurationSelected = onDurationSelected
+    )
 
     // Apps section
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -255,21 +342,16 @@ private fun NewSessionContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Blocked Apps",
+                    text = if (apps.isNotEmpty()) "Apps (${apps.size})" else "Apps",
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 FilledTonalButton(onClick = onAddApps) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
                     Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                    Text("Add Apps")
+                    Text("Add")
                 }
             }
-
             if (apps.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 FlowRow(
@@ -277,15 +359,12 @@ private fun NewSessionContent(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     apps.forEach { item ->
-                        BlockedItemChip(
-                            item = item,
-                            onRemove = { onRemoveItem(item) }
-                        )
+                        BlockedItemChip(item = item, onRemove = { onRemoveItem(item) })
                     }
                 }
             } else {
                 Text(
-                    text = "No apps added yet",
+                    text = "Tap Add to choose apps to block",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     modifier = Modifier.padding(top = 8.dp)
@@ -295,7 +374,13 @@ private fun NewSessionContent(
     }
 
     // URLs section
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -303,21 +388,16 @@ private fun NewSessionContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Blocked URLs",
+                    text = if (urls.isNotEmpty()) "URLs (${urls.size})" else "URLs",
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 FilledTonalButton(onClick = onAddUrls) {
-                    Icon(
-                        Icons.Default.Language,
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
+                    Icon(Icons.Default.Language, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
                     Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                    Text("Add URLs")
+                    Text("Add")
                 }
             }
-
             if (urls.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 FlowRow(
@@ -325,51 +405,18 @@ private fun NewSessionContent(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     urls.forEach { item ->
-                        BlockedItemChip(
-                            item = item,
-                            onRemove = { onRemoveItem(item) }
-                        )
+                        BlockedItemChip(item = item, onRemove = { onRemoveItem(item) })
                     }
                 }
             } else {
                 Text(
-                    text = "No URLs added yet",
+                    text = "Tap Add to choose URLs to block",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
         }
-    }
-
-    // Duration picker
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            DurationPicker(
-                selectedDurationMs = selectedDurationMs,
-                onDurationSelected = onDurationSelected
-            )
-        }
-    }
-
-    // Start button
-    Button(
-        onClick = onStartFocus,
-        enabled = blockedItems.isNotEmpty() && selectedDurationMs != null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-    ) {
-        Icon(
-            Icons.Default.Lock,
-            contentDescription = null,
-            modifier = Modifier.size(ButtonDefaults.IconSize)
-        )
-        Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-        Text(
-            text = "Start Focus",
-            style = MaterialTheme.typography.titleMedium
-        )
     }
 }
 
