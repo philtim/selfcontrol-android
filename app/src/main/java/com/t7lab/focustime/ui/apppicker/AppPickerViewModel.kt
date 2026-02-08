@@ -5,7 +5,6 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.t7lab.focustime.data.db.BlockedItemType
 import com.t7lab.focustime.data.repository.BlocklistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -70,39 +69,38 @@ class AppPickerViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            val (installedApps, selectedPackages) = withContext(Dispatchers.IO) {
+            val (allAppInfos, curatedApps) = withContext(Dispatchers.IO) {
                 val pm = context.packageManager
                 val apps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
                     .filter { it.flags and ApplicationInfo.FLAG_SYSTEM == 0 || isLauncher(pm, it.packageName) }
                     .filter { it.packageName != context.packageName }
                     .sortedBy { pm.getApplicationLabel(it).toString().lowercase() }
 
-                val selected = blocklistRepository.getBlockedApps()
+                val selectedPackages = blocklistRepository.getBlockedApps()
                     .map { it.value }
                     .toSet()
 
-                Pair(apps, selected)
-            }
+                val appInfos = apps.map { appInfo ->
+                    AppInfo(
+                        packageName = appInfo.packageName,
+                        displayName = pm.getApplicationLabel(appInfo).toString(),
+                        isSelected = appInfo.packageName in selectedPackages,
+                        isCuratedDistraction = appInfo.packageName in CURATED_DISTRACTIONS
+                    )
+                }
 
-            val pm = context.packageManager
-            val allAppInfos = installedApps.map { appInfo ->
-                AppInfo(
-                    packageName = appInfo.packageName,
-                    displayName = pm.getApplicationLabel(appInfo).toString(),
-                    isSelected = appInfo.packageName in selectedPackages,
-                    isCuratedDistraction = appInfo.packageName in CURATED_DISTRACTIONS
-                )
-            }
+                val curated = CURATED_DISTRACTIONS.map { (pkg, name) ->
+                    val installed = appInfos.find { it.packageName == pkg }
+                    AppInfo(
+                        packageName = pkg,
+                        displayName = installed?.displayName ?: name,
+                        isSelected = pkg in selectedPackages,
+                        isCuratedDistraction = true
+                    )
+                }.filter { c -> appInfos.any { it.packageName == c.packageName } }
 
-            val curatedApps = CURATED_DISTRACTIONS.map { (pkg, name) ->
-                val installed = allAppInfos.find { it.packageName == pkg }
-                AppInfo(
-                    packageName = pkg,
-                    displayName = installed?.displayName ?: name,
-                    isSelected = pkg in selectedPackages,
-                    isCuratedDistraction = true
-                )
-            }.filter { curated -> allAppInfos.any { it.packageName == curated.packageName } }
+                Pair(appInfos, curated)
+            }
 
             _uiState.value = AppPickerUiState(
                 allApps = allAppInfos,

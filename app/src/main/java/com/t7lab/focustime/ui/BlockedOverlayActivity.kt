@@ -3,6 +3,7 @@ package com.t7lab.focustime.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,6 +58,12 @@ class BlockedOverlayActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                goHome()
+            }
+        })
+
         setContent {
             FocusTimeTheme {
                 Surface(
@@ -83,10 +90,6 @@ class BlockedOverlayActivity : ComponentActivity() {
         finish()
     }
 
-    @Deprecated("Use OnBackPressedCallback")
-    override fun onBackPressed() {
-        goHome()
-    }
 }
 
 @Composable

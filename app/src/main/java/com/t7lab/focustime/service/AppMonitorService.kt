@@ -1,20 +1,19 @@
 package com.t7lab.focustime.service
 
 import android.app.Notification
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
-import androidx.room.Room
 import com.t7lab.focustime.MainActivity
 import com.t7lab.focustime.R
 import com.t7lab.focustime.data.db.BlockedItemType
-import com.t7lab.focustime.data.db.FocusTimeDatabase
-import com.t7lab.focustime.data.preferences.PreferencesManager
+import com.t7lab.focustime.di.ServiceEntryPoint
 import com.t7lab.focustime.ui.BlockedOverlayActivity
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -69,16 +68,13 @@ class AppMonitorService : Service() {
     }
 
     private suspend fun loadBlockedApps() {
-        val db = Room.databaseBuilder(
-            applicationContext,
-            FocusTimeDatabase::class.java,
-            "focustime.db"
-        ).build()
-        blockedPackages = db.sessionDao().getActiveBlockedItems()
+        val entryPoint = EntryPointAccessors.fromApplication(
+            applicationContext, ServiceEntryPoint::class.java
+        )
+        blockedPackages = entryPoint.sessionDao().getActiveBlockedItems()
             .filter { it.type == BlockedItemType.APP }
             .map { it.value }
             .toSet()
-        db.close()
     }
 
     private fun startMonitoring() {
@@ -89,11 +85,13 @@ class AppMonitorService : Service() {
 
         monitorJob?.cancel()
         monitorJob = serviceScope.launch {
-            val prefs = PreferencesManager(applicationContext)
+            val entryPoint = EntryPointAccessors.fromApplication(
+                applicationContext, ServiceEntryPoint::class.java
+            )
+            val prefs = entryPoint.preferencesManager()
             val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 
             while (isActive) {
-                // Check if session is still active
                 val endTime = prefs.getSessionEndTimeOnce()
                 if (endTime > 0 && System.currentTimeMillis() >= endTime) {
                     prefs.endSession()
@@ -101,30 +99,34 @@ class AppMonitorService : Service() {
                     break
                 }
 
-                // Check current foreground app
                 val foregroundPackage = getForegroundPackage(usageStatsManager)
                 if (foregroundPackage != null && foregroundPackage in blockedPackages) {
                     launchBlockedOverlay(foregroundPackage)
                 }
 
-                delay(500) // Check every 500ms
+                delay(500)
             }
         }
     }
 
     private fun getForegroundPackage(usageStatsManager: UsageStatsManager): String? {
-        val endTime = System.currentTimeMillis()
-        val beginTime = endTime - 5000
+        val now = System.currentTimeMillis()
+        val usageEvents = usageStatsManager.queryEvents(now - 5000, now)
+        val event = UsageEvents.Event()
+        var lastForegroundPackage: String? = null
+        var lastForegroundTime = 0L
 
-        val usageEvents = usageStatsManager.queryUsageStats(
-            UsageStatsManager.INTERVAL_BEST,
-            beginTime,
-            endTime
-        )
+        while (usageEvents.hasNextEvent()) {
+            usageEvents.getNextEvent(event)
+            if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                if (event.timeStamp >= lastForegroundTime) {
+                    lastForegroundTime = event.timeStamp
+                    lastForegroundPackage = event.packageName
+                }
+            }
+        }
 
-        if (usageEvents.isNullOrEmpty()) return null
-
-        return usageEvents.maxByOrNull { it.lastTimeUsed }?.packageName
+        return lastForegroundPackage
     }
 
     private fun launchBlockedOverlay(packageName: String) {

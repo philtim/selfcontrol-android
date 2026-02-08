@@ -3,7 +3,8 @@ package com.t7lab.focustime.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.t7lab.focustime.data.preferences.PreferencesManager
+import com.t7lab.focustime.di.ServiceEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,7 +18,10 @@ class BootReceiver : BroadcastReceiver() {
             val pendingResult = goAsync()
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val prefs = PreferencesManager(context)
+                    val entryPoint = EntryPointAccessors.fromApplication(
+                        context.applicationContext, ServiceEntryPoint::class.java
+                    )
+                    val prefs = entryPoint.preferencesManager()
                     if (prefs.isSessionActiveOnce()) {
                         val endTime = prefs.getSessionEndTimeOnce()
                         if (endTime > System.currentTimeMillis()) {

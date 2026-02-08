@@ -3,8 +3,8 @@ package com.t7lab.focustime.service
 import android.app.admin.DeviceAdminReceiver
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
-import com.t7lab.focustime.data.preferences.PreferencesManager
+import com.t7lab.focustime.di.ServiceEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.runBlocking
 
 class FocusDeviceAdminReceiver : DeviceAdminReceiver() {
@@ -14,9 +14,11 @@ class FocusDeviceAdminReceiver : DeviceAdminReceiver() {
     }
 
     override fun onDisableRequested(context: Context, intent: Intent): CharSequence? {
-        // Check if session is active - warn user
         val isActive = runBlocking {
-            PreferencesManager(context).isSessionActiveOnce()
+            val entryPoint = EntryPointAccessors.fromApplication(
+                context.applicationContext, ServiceEntryPoint::class.java
+            )
+            entryPoint.preferencesManager().isSessionActiveOnce()
         }
         return if (isActive) {
             "FocusTime has an active session. Disabling device admin will not end the session."

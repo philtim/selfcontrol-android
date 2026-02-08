@@ -1,6 +1,5 @@
 package com.t7lab.focustime.ui.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,10 +50,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.t7lab.focustime.data.db.BlockedItem
 import com.t7lab.focustime.data.db.BlockedItemType
 import com.t7lab.focustime.ui.components.BlockedItemChip
 import com.t7lab.focustime.ui.components.DurationPicker
@@ -146,7 +144,7 @@ private fun ActiveSessionContent(
     remainingTimeMs: Long,
     endTime: Long,
     durationMs: Long,
-    blockedItems: List<com.t7lab.focustime.data.db.BlockedItem>,
+    blockedItems: List<BlockedItem>,
     onUnlockClick: () -> Unit
 ) {
     val progress = if (durationMs > 0) {
@@ -237,12 +235,12 @@ private fun ActiveSessionContent(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun NewSessionContent(
-    blockedItems: List<com.t7lab.focustime.data.db.BlockedItem>,
+    blockedItems: List<BlockedItem>,
     selectedDurationMs: Long?,
     onDurationSelected: (Long) -> Unit,
     onAddApps: () -> Unit,
     onAddUrls: () -> Unit,
-    onRemoveItem: (com.t7lab.focustime.data.db.BlockedItem) -> Unit,
+    onRemoveItem: (BlockedItem) -> Unit,
     onStartFocus: () -> Unit
 ) {
     val apps = blockedItems.filter { it.type == BlockedItemType.APP }

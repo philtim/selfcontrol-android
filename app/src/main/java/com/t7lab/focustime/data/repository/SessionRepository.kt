@@ -1,6 +1,8 @@
 package com.t7lab.focustime.data.repository
 
+import androidx.room.withTransaction
 import com.t7lab.focustime.data.db.BlockedItem
+import com.t7lab.focustime.data.db.FocusTimeDatabase
 import com.t7lab.focustime.data.db.Session
 import com.t7lab.focustime.data.db.SessionDao
 import com.t7lab.focustime.data.db.SessionItem
@@ -11,6 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SessionRepository @Inject constructor(
+    private val database: FocusTimeDatabase,
     private val sessionDao: SessionDao,
     private val preferencesManager: PreferencesManager
 ) {
@@ -19,25 +22,28 @@ class SessionRepository @Inject constructor(
     fun getActiveBlockedItems(): Flow<List<BlockedItem>> = sessionDao.getActiveBlockedItemsFlow()
 
     suspend fun startSession(durationMs: Long, blockedItemIds: List<Long>): Long {
-        // Deactivate any existing sessions
-        sessionDao.deactivateAllSessions()
-
         val now = System.currentTimeMillis()
         val endTime = now + durationMs
 
-        val session = Session(
-            startTime = now,
-            durationMs = durationMs,
-            endTime = endTime,
-            isActive = true
-        )
+        val sessionId = database.withTransaction {
+            sessionDao.deactivateAllSessions()
 
-        val sessionId = sessionDao.insert(session)
+            val session = Session(
+                startTime = now,
+                durationMs = durationMs,
+                endTime = endTime,
+                isActive = true
+            )
 
-        val sessionItems = blockedItemIds.map { itemId ->
-            SessionItem(sessionId = sessionId, blockedItemId = itemId)
+            val id = sessionDao.insert(session)
+
+            val sessionItems = blockedItemIds.map { itemId ->
+                SessionItem(sessionId = id, blockedItemId = itemId)
+            }
+            sessionDao.insertSessionItems(sessionItems)
+
+            id
         }
-        sessionDao.insertSessionItems(sessionItems)
 
         // Also persist to DataStore for quick service access
         preferencesManager.startSession(sessionId, endTime)
