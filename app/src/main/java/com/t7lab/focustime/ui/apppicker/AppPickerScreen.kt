@@ -1,7 +1,14 @@
 package com.t7lab.focustime.ui.apppicker
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +27,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -37,8 +43,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.t7lab.focustime.ui.components.ShimmerAppListPlaceholder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +56,7 @@ fun AppPickerScreen(
     viewModel: AppPickerViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val haptic = LocalHapticFeedback.current
 
     Scaffold(
         topBar = {
@@ -93,17 +103,14 @@ fun AppPickerScreen(
             ) {}
 
             if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                ShimmerAppListPlaceholder(
+                    modifier = Modifier.fillMaxSize()
+                )
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     // Curated distractions section
                     if (uiState.searchQuery.isBlank() && uiState.curatedApps.isNotEmpty()) {
-                        item {
+                        item(key = "curated_header") {
                             Text(
                                 text = "Common Distractions",
                                 style = MaterialTheme.typography.titleSmall,
@@ -119,11 +126,15 @@ fun AppPickerScreen(
                             AppListItem(
                                 app = app,
                                 isCurated = true,
-                                onToggle = { viewModel.toggleApp(app.packageName) }
+                                onToggle = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LightTap)
+                                    viewModel.toggleApp(app.packageName)
+                                },
+                                modifier = Modifier.animateItem()
                             )
                         }
 
-                        item {
+                        item(key = "all_apps_header") {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                             Text(
                                 text = "All Apps",
@@ -142,7 +153,11 @@ fun AppPickerScreen(
                         AppListItem(
                             app = app,
                             isCurated = false,
-                            onToggle = { viewModel.toggleApp(app.packageName) }
+                            onToggle = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LightTap)
+                                viewModel.toggleApp(app.packageName)
+                            },
+                            modifier = Modifier.animateItem()
                         )
                     }
                 }
@@ -155,7 +170,8 @@ fun AppPickerScreen(
 private fun AppListItem(
     app: AppInfo,
     isCurated: Boolean,
-    onToggle: () -> Unit
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     ListItem(
         headlineContent = { Text(app.displayName) },
@@ -186,14 +202,40 @@ private fun AppListItem(
             }
         },
         trailingContent = {
-            Icon(
-                imageVector = if (app.isSelected) Icons.Default.CheckCircle
-                else Icons.Default.RadioButtonUnchecked,
-                contentDescription = if (app.isSelected) "Selected" else "Not selected",
-                tint = if (app.isSelected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.onSurfaceVariant
+            SelectionIcon(isSelected = app.isSelected)
+        },
+        modifier = modifier.clickable(onClick = onToggle)
+    )
+}
+
+@Composable
+private fun SelectionIcon(isSelected: Boolean) {
+    AnimatedContent(
+        targetState = isSelected,
+        transitionSpec = {
+            (fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
+                    scaleIn(
+                        initialScale = 0.6f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessMedium
+                        )
+                    )).togetherWith(
+                fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
+                        scaleOut(
+                            targetScale = 0.6f,
+                            animationSpec = spring(stiffness = Spring.StiffnessHigh)
+                        )
             )
         },
-        modifier = Modifier.clickable(onClick = onToggle)
-    )
+        label = "selection_icon"
+    ) { selected ->
+        Icon(
+            imageVector = if (selected) Icons.Default.CheckCircle
+            else Icons.Default.RadioButtonUnchecked,
+            contentDescription = if (selected) "Selected" else "Not selected",
+            tint = if (selected) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
 }

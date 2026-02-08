@@ -29,6 +29,10 @@ class PreferencesManager @Inject constructor(
         val SESSION_ACTIVE = booleanPreferencesKey("session_active")
         val SESSION_END_TIME = longPreferencesKey("session_end_time")
         val SESSION_ID = longPreferencesKey("session_id")
+        val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
+        val DYNAMIC_COLORS = booleanPreferencesKey("dynamic_colors")
+        val LAST_COMPLETED_DURATION_MS = longPreferencesKey("last_completed_duration_ms")
     }
 
     val hasPassword: Flow<Boolean> = dataStore.data.map { prefs ->
@@ -47,12 +51,58 @@ class PreferencesManager @Inject constructor(
         prefs[Keys.SESSION_ID] ?: 0L
     }
 
+    val themeMode: Flow<String> = dataStore.data.map { prefs ->
+        prefs[Keys.THEME_MODE] ?: "system"
+    }
+
+    val dynamicColors: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[Keys.DYNAMIC_COLORS] ?: true
+    }
+
     suspend fun isSessionActiveOnce(): Boolean {
         return dataStore.data.first()[Keys.SESSION_ACTIVE] == true
     }
 
     suspend fun getSessionEndTimeOnce(): Long {
         return dataStore.data.first()[Keys.SESSION_END_TIME] ?: 0L
+    }
+
+    suspend fun isOnboardingComplete(): Boolean {
+        return dataStore.data.first()[Keys.ONBOARDING_COMPLETE] == true
+    }
+
+    suspend fun completeOnboarding() {
+        dataStore.edit { prefs ->
+            prefs[Keys.ONBOARDING_COMPLETE] = true
+        }
+    }
+
+    suspend fun setThemeMode(mode: String) {
+        dataStore.edit { prefs ->
+            prefs[Keys.THEME_MODE] = mode
+        }
+    }
+
+    suspend fun setDynamicColors(enabled: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[Keys.DYNAMIC_COLORS] = enabled
+        }
+    }
+
+    suspend fun setLastCompletedDuration(durationMs: Long) {
+        dataStore.edit { prefs ->
+            prefs[Keys.LAST_COMPLETED_DURATION_MS] = durationMs
+        }
+    }
+
+    suspend fun getLastCompletedDuration(): Long {
+        return dataStore.data.first()[Keys.LAST_COMPLETED_DURATION_MS] ?: 0L
+    }
+
+    suspend fun clearLastCompletedDuration() {
+        dataStore.edit { prefs ->
+            prefs.remove(Keys.LAST_COMPLETED_DURATION_MS)
+        }
     }
 
     suspend fun setPassword(password: String) {
@@ -94,7 +144,7 @@ class PreferencesManager @Inject constructor(
 
     private fun hashPassword(password: String): String {
         val digest = MessageDigest.getInstance("SHA-256")
-        val salt = "FocusTime_v1_salt" // static salt - sufficient for local-only password
+        val salt = "FocusTime_v1_salt"
         val bytes = digest.digest("$salt$password".toByteArray())
         return bytes.joinToString("") { "%02x".format(it) }
     }

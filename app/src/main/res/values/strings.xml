@@ -4,22 +4,43 @@
 
     <!-- Home Screen -->
     <string name="start_focus">Start Focus</string>
+    <string name="add_items_to_start">Add items to start</string>
     <string name="focus_active">Focus Active</string>
     <string name="time_remaining">Time Remaining</string>
+    <string name="remaining">remaining</string>
     <string name="add_apps">Add Apps</string>
     <string name="add_urls">Add URLs</string>
     <string name="blocked_apps">Blocked Apps</string>
     <string name="blocked_urls">Blocked URLs</string>
     <string name="no_items_yet">No items added yet</string>
+    <string name="tap_add_apps">Tap Add to choose apps to block</string>
+    <string name="tap_add_urls">Tap Add to choose URLs to block</string>
     <string name="select_duration">Select Duration</string>
     <string name="custom">Custom</string>
-    <string name="unlock_with_password">Unlock with Password</string>
+    <string name="unlock_with_password">Unlock with password</string>
     <string name="session_ended">Focus session ended!</string>
     <string name="session_ended_body">Great job staying focused! Your apps and URLs are now unblocked.</string>
 
+    <!-- Session Complete -->
+    <string name="well_done">Well Done!</string>
+    <string name="you_stayed_focused_for">You stayed focused for</string>
+    <string name="session_complete_message">Your apps and URLs are now unblocked.\nKeep up the great work!</string>
+    <string name="continue_label">Continue</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title_1">Take Control of\nYour Focus</string>
+    <string name="onboarding_desc_1">FocusTime blocks distracting apps and websites so you can stay focused on what matters most.</string>
+    <string name="onboarding_title_2">Pick What\nTo Block</string>
+    <string name="onboarding_desc_2">Choose from common distractions or add your own apps and websites. You decide what gets blocked.</string>
+    <string name="onboarding_title_3">Set a Timer\nand Go</string>
+    <string name="onboarding_desc_3">Pick a duration, hit start, and stay focused. FocusTime keeps you accountable until the timer ends.</string>
+    <string name="next">Next</string>
+    <string name="get_started">Get Started</string>
+    <string name="skip">Skip</string>
+
     <!-- App Picker -->
     <string name="select_apps">Select Apps to Block</string>
-    <string name="search_apps">Search apps…</string>
+    <string name="search_apps">Search apps\u2026</string>
     <string name="common_distractions">Common Distractions</string>
     <string name="all_apps">All Apps</string>
     <string name="done">Done</string>
@@ -37,6 +58,7 @@
     <string name="set_password">Set Password</string>
     <string name="change_password">Change Password</string>
     <string name="remove_password">Remove Password</string>
+    <string name="confirm_remove_password">Enter current password to confirm removal</string>
     <string name="current_password">Current password</string>
     <string name="new_password">New password</string>
     <string name="confirm_password">Confirm password</string>
@@ -49,12 +71,21 @@
     <string name="cannot_change_during_session">Cannot change password during an active session</string>
     <string name="no_password_set">No master password set</string>
     <string name="password_description">Set a master password to allow unlocking focus sessions early. Share it with someone you trust.</string>
+    <string name="about">About</string>
+    <string name="version_format">Version %1$s</string>
+    <string name="made_by">Made by T7Lab</string>
 
     <!-- Blocked overlay -->
+    <string name="focus_mode_active">You\'re in Focus Mode</string>
+    <string name="app_blocked_named">%1$s is blocked for another</string>
+    <string name="app_blocked_generic">This app is blocked during your focus session</string>
+    <string name="return_to_home">Return to Home Screen</string>
+    <string name="enter_password_to_unlock">Enter password to unlock</string>
+
+    <!-- Legacy overlay strings (kept for compatibility) -->
     <string name="app_blocked_title">App Blocked</string>
     <string name="app_blocked_message">This app is blocked during your focus session.\n\nTime remaining: %1$s</string>
     <string name="go_back">Go Back</string>
-    <string name="enter_password_to_unlock">Enter password to unlock</string>
 
     <!-- Permissions -->
     <string name="usage_access_needed">Usage access permission is needed to detect blocked apps.</string>
