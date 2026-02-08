@@ -82,6 +82,41 @@ com.t7lab.focustime/
 
 The debug APK will be at `app/build/outputs/apk/debug/app-debug.apk`.
 
+## Running Locally
+
+### On an emulator
+
+1. Open the project in Android Studio.
+2. Go to **Tools > Device Manager** and create a virtual device with API 26 or higher.
+3. Click **Run** (or `Shift+F10`) to build and launch the app on the emulator.
+
+> **Note:** VPN-based URL blocking requires the emulator to accept the VPN prompt. App blocking works normally, but some system apps may behave differently on emulators compared to physical devices.
+
+### On a physical device
+
+1. Enable **Developer Options** on your device (tap *Build Number* seven times in Settings > About Phone).
+2. Enable **USB Debugging** in Developer Options.
+3. Connect the device via USB and approve the debugging prompt.
+4. Select your device in Android Studio's device dropdown and click **Run**.
+
+### Granting runtime permissions
+
+After installing, the app will guide you through granting the required permissions. You can also enable them manually:
+
+1. **Usage Access** -- Settings > Apps > Special app access > Usage access > FocusTime
+2. **Display Over Other Apps** -- Settings > Apps > Special app access > Display over other apps > FocusTime
+3. **VPN** -- Prompted automatically when starting a session with URL blocking
+4. **Device Admin** -- Prompted automatically when starting a session
+5. **Notifications** -- Prompted on first session start (Android 13+)
+
+### From the command line
+
+```bash
+# Build, install, and launch on a connected device or emulator
+./gradlew installDebug
+adb shell am start -n com.t7lab.focustime/.MainActivity
+```
+
 ## Permissions
 
 The app requires several permissions to function. All are requested at runtime when needed:
