@@ -4,31 +4,37 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Clock/timer icon representing FocusTime -->
+    <!-- Shield + Clock icon representing FocusTime -->
     <group
         android:pivotX="54"
         android:pivotY="54">
-        <!-- Circle outline -->
+        <!-- White shield shape (outer) -->
         <path
             android:fillColor="#FFFFFF"
-            android:pathData="M54,27 A27,27 0 1,1 53.99,27 Z" />
+            android:pathData="M54,18 L28,28 L28,54 C28,72 39,82 54,86 C69,82 80,72 80,54 L80,28 Z" />
+        <!-- Dark green shield interior -->
         <path
-            android:fillColor="#1B6D3D"
-            android:pathData="M54,30 A24,24 0 1,1 53.99,30 Z" />
+            android:fillColor="#0A4025"
+            android:pathData="M54,24 L32,32 L32,53 C32,69 41,78 54,82 C67,78 76,69 76,53 L76,32 Z" />
+        <!-- White clock circle (outer ring) -->
         <path
             android:fillColor="#FFFFFF"
-            android:pathData="M54,33 A21,21 0 1,1 53.99,33 Z" />
-        <!-- Hour hand -->
+            android:pathData="M54,34 A16,16,0,1,1,53.99,34 Z" />
+        <!-- Green clock face (inner) -->
         <path
-            android:fillColor="#1B6D3D"
-            android:pathData="M53,54 L53,42 L55,42 L55,54 Z" />
-        <!-- Minute hand -->
+            android:fillColor="#0A4025"
+            android:pathData="M54,37 A13,13,0,1,1,53.99,37 Z" />
+        <!-- Hour hand (pointing to 12) -->
         <path
-            android:fillColor="#1B6D3D"
-            android:pathData="M54,53 L66,53 L66,55 L54,55 Z" />
+            android:fillColor="#FFFFFF"
+            android:pathData="M52,50 L52,40 L56,40 L56,50 Z" />
+        <!-- Minute hand (pointing to 3) -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,48 L64,48 L64,52 L54,52 Z" />
         <!-- Center dot -->
         <path
-            android:fillColor="#1B6D3D"
-            android:pathData="M54,51.5 A2.5,2.5 0 1,1 53.99,51.5 Z" />
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,47 A3,3,0,1,1,53.99,47 Z" />
     </group>
 </vector>

@@ -2,9 +2,9 @@ package com.t7lab.focustime.ui.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Language
+import androidx.compose.ui.res.painterResource
+import com.t7lab.focustime.R
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,9 +37,9 @@ fun BlockedItemChip(
             },
             leadingIcon = {
                 Icon(
-                    imageVector = when (item.type) {
-                        BlockedItemType.APP -> Icons.Default.Android
-                        BlockedItemType.URL -> Icons.Default.Language
+                    painter = when (item.type) {
+                        BlockedItemType.APP -> painterResource(R.drawable.ic_app_block)
+                        BlockedItemType.URL -> painterResource(R.drawable.ic_web_block)
                     },
                     contentDescription = null,
                     modifier = Modifier.size(InputChipDefaults.IconSize)
@@ -71,9 +71,9 @@ fun BlockedItemChip(
             },
             leadingIcon = {
                 Icon(
-                    imageVector = when (item.type) {
-                        BlockedItemType.APP -> Icons.Default.Android
-                        BlockedItemType.URL -> Icons.Default.Language
+                    painter = when (item.type) {
+                        BlockedItemType.APP -> painterResource(R.drawable.ic_app_block)
+                        BlockedItemType.URL -> painterResource(R.drawable.ic_web_block)
                     },
                     contentDescription = null,
                     modifier = Modifier.size(18.dp)

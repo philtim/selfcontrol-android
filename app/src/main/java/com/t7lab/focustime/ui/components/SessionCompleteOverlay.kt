@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,11 +28,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.t7lab.focustime.R
 import com.t7lab.focustime.util.formatDuration
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.random.Random
 
 @Composable
@@ -54,7 +59,7 @@ fun SessionCompleteOverlay(
     )
 
     val particles = remember {
-        List(80) {
+        List(100) {
             ConfettiParticle(
                 x = Random.nextFloat(),
                 initialY = -Random.nextFloat() * 0.3f,
@@ -62,6 +67,8 @@ fun SessionCompleteOverlay(
                 size = 4f + Random.nextFloat() * 8f,
                 color = confettiColors[Random.nextInt(confettiColors.size)],
                 drift = (Random.nextFloat() - 0.5f) * 0.3f,
+                shape = ConfettiShape.entries[Random.nextInt(ConfettiShape.entries.size)],
+                rotation = Random.nextFloat() * 360f,
             )
         }
     }
@@ -90,11 +97,74 @@ fun SessionCompleteOverlay(
                     val y = particle.initialY + currentProgress * particle.speed
                     if (y in 0f..1.2f) {
                         val x = particle.x + currentProgress * particle.drift
-                        drawCircle(
-                            color = particle.color.copy(alpha = (1f - y).coerceIn(0f, 1f)),
-                            radius = particle.size,
-                            center = Offset(x * canvasWidth, y * canvasHeight)
-                        )
+                        val alpha = (1f - y).coerceIn(0f, 1f)
+                        val center = Offset(x * canvasWidth, y * canvasHeight)
+                        val particleRotation = particle.rotation + currentProgress * 360f
+
+                        when (particle.shape) {
+                            ConfettiShape.CIRCLE -> {
+                                drawCircle(
+                                    color = particle.color.copy(alpha = alpha),
+                                    radius = particle.size,
+                                    center = center
+                                )
+                            }
+                            ConfettiShape.RECT -> {
+                                rotate(particleRotation, pivot = center) {
+                                    drawRect(
+                                        color = particle.color.copy(alpha = alpha),
+                                        topLeft = Offset(
+                                            center.x - particle.size,
+                                            center.y - particle.size * 0.5f
+                                        ),
+                                        size = Size(
+                                            particle.size * 2f,
+                                            particle.size
+                                        )
+                                    )
+                                }
+                            }
+                            ConfettiShape.STAR -> {
+                                rotate(particleRotation, pivot = center) {
+                                    val starPath = Path().apply {
+                                        val outerR = particle.size * 1.2f
+                                        val innerR = particle.size * 0.5f
+                                        for (i in 0 until 5) {
+                                            val outerAngle =
+                                                Math.toRadians((i * 72 - 90).toDouble())
+                                            val innerAngle =
+                                                Math.toRadians((i * 72 + 36 - 90).toDouble())
+                                            val ox = center.x + outerR * cos(outerAngle).toFloat()
+                                            val oy = center.y + outerR * sin(outerAngle).toFloat()
+                                            val ix = center.x + innerR * cos(innerAngle).toFloat()
+                                            val iy = center.y + innerR * sin(innerAngle).toFloat()
+                                            if (i == 0) moveTo(ox, oy) else lineTo(ox, oy)
+                                            lineTo(ix, iy)
+                                        }
+                                        close()
+                                    }
+                                    drawPath(
+                                        path = starPath,
+                                        color = particle.color.copy(alpha = alpha)
+                                    )
+                                }
+                            }
+                            ConfettiShape.DIAMOND -> {
+                                rotate(particleRotation, pivot = center) {
+                                    val diamondPath = Path().apply {
+                                        moveTo(center.x, center.y - particle.size)
+                                        lineTo(center.x + particle.size * 0.6f, center.y)
+                                        lineTo(center.x, center.y + particle.size)
+                                        lineTo(center.x - particle.size * 0.6f, center.y)
+                                        close()
+                                    }
+                                    drawPath(
+                                        path = diamondPath,
+                                        color = particle.color.copy(alpha = alpha)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -117,7 +187,7 @@ fun SessionCompleteOverlay(
                     ) + fadeIn()
                 ) {
                     Icon(
-                        Icons.Default.EmojiEvents,
+                        painter = painterResource(R.drawable.ic_achievement_star),
                         contentDescription = null,
                         tint = Color(0xFFFFC107),
                         modifier = Modifier.size(100.dp)
@@ -175,6 +245,10 @@ fun SessionCompleteOverlay(
     }
 }
 
+private enum class ConfettiShape {
+    CIRCLE, RECT, STAR, DIAMOND
+}
+
 private data class ConfettiParticle(
     val x: Float,
     val initialY: Float,
@@ -182,4 +256,6 @@ private data class ConfettiParticle(
     val size: Float,
     val color: Color,
     val drift: Float,
+    val shape: ConfettiShape = ConfettiShape.CIRCLE,
+    val rotation: Float = 0f,
 )
