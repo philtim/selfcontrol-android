@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Language
@@ -40,7 +42,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -113,38 +114,53 @@ fun HomeScreen(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { padding ->
-        Column(
+        val scrollState = rememberScrollState()
+        var contentHeight by remember { mutableIntStateOf(0) }
+        var containerHeight by remember { mutableIntStateOf(0) }
+        val needsScroll = contentHeight > containerHeight
+
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .onSizeChanged { containerHeight = it.height }
         ) {
-            if (uiState.isSessionActive) {
-                ActiveSessionContent(
-                    remainingTimeMs = uiState.remainingTimeMs,
-                    endTime = uiState.activeSession?.endTime ?: 0L,
-                    durationMs = uiState.activeSession?.durationMs ?: 1L,
-                    blockedItems = uiState.blockedItems,
-                    onUnlockClick = { showPasswordDialog = true }
-                )
-            } else {
-                NewSessionContent(
-                    blockedItems = uiState.blockedItems,
-                    selectedDurationMs = uiState.selectedDurationMs,
-                    onDurationSelected = viewModel::selectDuration,
-                    onAddApps = onNavigateToAppPicker,
-                    onAddUrls = onNavigateToUrlManager,
-                    onRemoveItem = viewModel::removeItem,
-                    onStartFocus = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        viewModel.startSession(onVpnPermissionNeeded)
-                    }
-                )
-            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(
+                        if (needsScroll) Modifier.verticalScroll(scrollState)
+                        else Modifier
+                    )
+                    .padding(horizontal = 16.dp)
+                    .onSizeChanged { contentHeight = it.height },
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                if (uiState.isSessionActive) {
+                    ActiveSessionContent(
+                        remainingTimeMs = uiState.remainingTimeMs,
+                        endTime = uiState.activeSession?.endTime ?: 0L,
+                        durationMs = uiState.activeSession?.durationMs ?: 1L,
+                        blockedItems = uiState.blockedItems,
+                        onUnlockClick = { showPasswordDialog = true }
+                    )
+                } else {
+                    NewSessionContent(
+                        blockedItems = uiState.blockedItems,
+                        selectedDurationMs = uiState.selectedDurationMs,
+                        onDurationSelected = viewModel::selectDuration,
+                        onAddApps = onNavigateToAppPicker,
+                        onAddUrls = onNavigateToUrlManager,
+                        onRemoveItem = viewModel::removeItem,
+                        onStartFocus = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            viewModel.startSession(onVpnPermissionNeeded)
+                        }
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
 
@@ -207,12 +223,13 @@ private fun ActiveSessionContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             Box(contentAlignment = Alignment.Center) {
+                // Progress shows elapsed time (fills up as time passes)
                 CircularProgressIndicator(
-                    progress = { animatedProgress },
+                    progress = { 1f - animatedProgress },
                     modifier = Modifier.size(200.dp),
                     strokeWidth = 10.dp,
-                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                 )
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -227,15 +244,6 @@ private fun ActiveSessionContent(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            LinearProgressIndicator(
-                progress = { animatedProgress },
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
