@@ -3,6 +3,7 @@ package com.t7lab.focustime.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.t7lab.focustime.data.db.BlockedItem
+import com.t7lab.focustime.data.db.BlockedItemType
 import com.t7lab.focustime.data.db.Session
 import com.t7lab.focustime.data.preferences.PreferencesManager
 import com.t7lab.focustime.data.repository.BlocklistRepository
@@ -125,6 +126,14 @@ class HomeViewModel @Inject constructor(
 
     fun startSession(onVpnPermissionNeeded: () -> Unit) {
         val duration = _uiState.value.selectedDurationMs ?: return
+
+        // Check if we need VPN permission (when blocking URLs)
+        val hasUrls = _uiState.value.blockedItems.any { it.type == BlockedItemType.URL }
+        if (hasUrls && !sessionManager.isVpnPermissionGranted()) {
+            onVpnPermissionNeeded()
+            return
+        }
+
         viewModelScope.launch {
             sessionManager.startSession(duration)
         }

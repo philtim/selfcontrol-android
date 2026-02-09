@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.VpnService
 import android.os.ParcelFileDescriptor
+import android.util.Log
 import com.t7lab.focustime.MainActivity
 import com.t7lab.focustime.R
 import com.t7lab.focustime.data.db.BlockedItem
@@ -29,16 +30,14 @@ import java.io.FileOutputStream
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.nio.ByteBuffer
+import java.nio.channels.DatagramChannel
 
 class FocusVpnService : VpnService() {
 
-    private var vpnInterface: ParcelFileDescriptor? = null
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private var timerJob: Job? = null
-    private var blockedUrls: List<BlockedItem> = emptyList()
-
     companion object {
+        private const val TAG = "FocusVpnService"
         const val CHANNEL_ID = "focus_session_channel"
         const val NOTIFICATION_ID = 1
         const val ACTION_START = "com.t7lab.focustime.START_VPN"
@@ -57,9 +56,29 @@ class FocusVpnService : VpnService() {
         }
     }
 
+    private var vpnInterface: ParcelFileDescriptor? = null
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var timerJob: Job? = null
+    private var blockedUrls: List<BlockedItem> = emptyList()
+    private var dnsChannel: DatagramChannel? = null
+
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+
+        // Create DNS forwarding channel on main thread (avoids coroutine context restrictions)
+        try {
+            dnsChannel = DatagramChannel.open()
+            dnsChannel?.let { channel ->
+                protect(channel.socket())
+                channel.socket().soTimeout = 5000
+                channel.configureBlocking(true)
+                // Don't connect() - we'll use send() with address instead
+                Log.d(TAG, "DNS forwarding channel created and protected in onCreate")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to create DNS channel in onCreate: ${e.message}", e)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -90,15 +109,23 @@ class FocusVpnService : VpnService() {
     }
 
     private fun startVpn() {
-        if (blockedUrls.isEmpty()) return
+        if (blockedUrls.isEmpty()) {
+            Log.d(TAG, "No URLs to block, skipping VPN setup")
+            return
+        }
+
+        Log.d(TAG, "Starting VPN with ${blockedUrls.size} blocked URLs: ${blockedUrls.map { it.value }}")
+        Log.d(TAG, "DNS channel available: ${dnsChannel != null}")
 
         val builder = Builder()
             .setSession("FocusTime")
             .addAddress("10.0.0.2", 32)
             .addDnsServer("10.0.0.1")
+            // Only route our fake DNS through VPN - real DNS forwarding uses protected socket
             .addRoute("10.0.0.1", 32)
 
         vpnInterface = builder.establish()
+        Log.d(TAG, "VPN interface established: ${vpnInterface != null}")
 
         vpnInterface?.let { pfd ->
             serviceScope.launch {
@@ -147,8 +174,9 @@ class FocusVpnService : VpnService() {
         val protocol = packet[9].toInt() and 0xFF
         if (protocol != 17) return null
 
-        val destPort = ((packet[ipHeaderLen].toInt() and 0xFF) shl 8) or
-                (packet[ipHeaderLen + 1].toInt() and 0xFF)
+        // UDP header: source port (2 bytes), dest port (2 bytes), length (2), checksum (2)
+        val destPort = ((packet[ipHeaderLen + 2].toInt() and 0xFF) shl 8) or
+                (packet[ipHeaderLen + 3].toInt() and 0xFF)
         if (destPort != 53) return null
 
         val dnsOffset = ipHeaderLen + 8
@@ -156,9 +184,11 @@ class FocusVpnService : VpnService() {
 
         val hostname = parseDnsHostname(packet, dnsOffset + 12)
         if (hostname != null && isHostBlocked(hostname, blockedUrls)) {
+            Log.d(TAG, "BLOCKING DNS query for: $hostname")
             return buildDnsBlockResponse(packet, ipHeaderLen, dnsOffset)
         }
 
+        Log.d(TAG, "FORWARDING DNS query for: $hostname")
         return forwardDnsQuery(packet, ipHeaderLen, dnsOffset)
     }
 
@@ -240,28 +270,40 @@ class FocusVpnService : VpnService() {
         return pos
     }
 
+    @Synchronized
     private fun forwardDnsQuery(packet: ByteArray, ipHeaderLen: Int, dnsOffset: Int): ByteArray? {
+        val channel = dnsChannel ?: run {
+            Log.e(TAG, "DNS channel not available")
+            return null
+        }
+
         try {
             val dnsData = packet.copyOfRange(dnsOffset, packet.size)
-            val socket = DatagramSocket()
-            protect(socket)
+            val dnsServer = InetSocketAddress("8.8.8.8", 53)
 
-            val dnsServer = InetAddress.getByName("8.8.8.8")
-            val outPacket = DatagramPacket(dnsData, dnsData.size, dnsServer, 53)
-            socket.soTimeout = 5000
-            socket.send(outPacket)
+            // Send DNS query using pre-created channel (use send() instead of write())
+            channel.send(ByteBuffer.wrap(dnsData), dnsServer)
 
-            val responseBuffer = ByteArray(4096)
-            val inPacket = DatagramPacket(responseBuffer, responseBuffer.size)
-            socket.receive(inPacket)
-            socket.close()
+            // Receive response
+            val responseBuffer = ByteBuffer.allocate(4096)
+            channel.receive(responseBuffer)
+            responseBuffer.flip()
 
+            val responseLength = responseBuffer.remaining()
+            val dnsResponseData = ByteArray(responseLength)
+            responseBuffer.get(dnsResponseData)
+
+            Log.d(TAG, "DNS forward success, received $responseLength bytes")
+
+            // Build IP response packet
             val response = packet.copyOf()
+            // Swap source and destination IP
             for (i in 0 until 4) {
                 val temp = response[12 + i]
                 response[12 + i] = response[16 + i]
                 response[16 + i] = temp
             }
+            // Swap source and destination ports
             val srcPort0 = response[ipHeaderLen]
             val srcPort1 = response[ipHeaderLen + 1]
             response[ipHeaderLen] = response[ipHeaderLen + 2]
@@ -269,18 +311,21 @@ class FocusVpnService : VpnService() {
             response[ipHeaderLen + 2] = srcPort0
             response[ipHeaderLen + 3] = srcPort1
 
-            val dnsResponseData = inPacket.data.copyOf(inPacket.length)
             val result = ByteArray(ipHeaderLen + 8 + dnsResponseData.size)
             System.arraycopy(response, 0, result, 0, ipHeaderLen + 8)
             System.arraycopy(dnsResponseData, 0, result, ipHeaderLen + 8, dnsResponseData.size)
 
+            // Update IP total length
             val totalLen = result.size
             result[2] = (totalLen shr 8).toByte()
             result[3] = (totalLen and 0xFF).toByte()
+
+            // Update UDP length
             val udpLen = totalLen - ipHeaderLen
             result[ipHeaderLen + 4] = (udpLen shr 8).toByte()
             result[ipHeaderLen + 5] = (udpLen and 0xFF).toByte()
 
+            // Recalculate checksums
             result[10] = 0; result[11] = 0
             result[ipHeaderLen + 6] = 0; result[ipHeaderLen + 7] = 0
             val checksum = calculateIpChecksum(result, ipHeaderLen)
@@ -289,6 +334,7 @@ class FocusVpnService : VpnService() {
 
             return result
         } catch (e: Exception) {
+            Log.e(TAG, "DNS forward failed: ${e.message}", e)
             return null
         }
     }
@@ -330,6 +376,10 @@ class FocusVpnService : VpnService() {
 
     private fun stopVpn() {
         timerJob?.cancel()
+        try {
+            dnsChannel?.close()
+        } catch (_: Exception) {}
+        dnsChannel = null
         vpnInterface?.close()
         vpnInterface = null
     }
