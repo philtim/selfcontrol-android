@@ -18,10 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AppBlocking
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,30 +32,31 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.t7lab.focustime.R
 
 private data class OnboardingPage(
-    val icon: ImageVector,
+    val iconRes: Int,
     val title: String,
     val description: String,
 )
 
 private val pages = listOf(
     OnboardingPage(
-        icon = Icons.Default.Shield,
+        iconRes = R.drawable.ic_focus_shield,
         title = "Take Control of\nYour Focus",
         description = "FocusTime blocks distracting apps and websites so you can stay focused on what matters most.",
     ),
     OnboardingPage(
-        icon = Icons.Default.AppBlocking,
+        iconRes = R.drawable.ic_app_block,
         title = "Pick What\nTo Block",
         description = "Choose from common distractions or add your own apps and websites. You decide what gets blocked.",
     ),
     OnboardingPage(
-        icon = Icons.Default.Schedule,
+        iconRes = R.drawable.ic_focus_timer,
         title = "Set a Timer\nand Go",
         description = "Pick a duration, hit start, and stay focused. FocusTime keeps you accountable until the timer ends.",
     ),
@@ -167,7 +164,7 @@ private fun OnboardingPageContent(page: OnboardingPage) {
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = page.icon,
+                painter = painterResource(page.iconRes),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(56.dp)

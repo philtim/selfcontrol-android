@@ -22,8 +22,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Shield
+import androidx.compose.ui.res.painterResource
+import com.t7lab.focustime.R
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -173,7 +173,7 @@ private fun BlockedScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            Icons.Default.Shield,
+            painter = painterResource(R.drawable.ic_focus_shield),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(80.dp)
