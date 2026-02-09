@@ -44,7 +44,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.produceState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -179,11 +181,13 @@ private fun AppListItem(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val appIcon: Drawable? = remember(app.packageName) {
-        try {
-            context.packageManager.getApplicationIcon(app.packageName)
-        } catch (e: Exception) {
-            null
+    val appIcon by produceState<Drawable?>(initialValue = null, key1 = app.packageName) {
+        value = withContext(Dispatchers.IO) {
+            try {
+                context.packageManager.getApplicationIcon(app.packageName)
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 
