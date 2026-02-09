@@ -33,6 +33,7 @@ class AppMonitorService : Service() {
         const val NOTIFICATION_ID = 2
         const val ACTION_START = "com.t7lab.focustime.START_MONITOR"
         const val ACTION_STOP = "com.t7lab.focustime.STOP_MONITOR"
+        private const val FOREGROUND_APP_POLL_INTERVAL_MS = 500L
 
         fun createStartIntent(context: Context): Intent {
             return Intent(context, AppMonitorService::class.java).apply {
@@ -104,7 +105,7 @@ class AppMonitorService : Service() {
                     launchBlockedOverlay(foregroundPackage)
                 }
 
-                delay(500)
+                delay(FOREGROUND_APP_POLL_INTERVAL_MS)
             }
         }
     }
@@ -151,7 +152,7 @@ class AppMonitorService : Service() {
 
         return Notification.Builder(this, FocusVpnService.CHANNEL_ID)
             .setContentTitle(getString(R.string.notification_title))
-            .setContentText("Monitoring blocked apps")
+            .setContentText(getString(R.string.notification_monitoring_apps))
             .setSmallIcon(android.R.drawable.ic_lock_idle_lock)
             .setOngoing(true)
             .setContentIntent(pendingIntent)

@@ -23,15 +23,19 @@ object AppModule {
             context,
             FocusTimeDatabase::class.java,
             "focustime.db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
+    @Singleton
     fun provideBlockedItemDao(database: FocusTimeDatabase): BlockedItemDao {
         return database.blockedItemDao()
     }
 
     @Provides
+    @Singleton
     fun provideSessionDao(database: FocusTimeDatabase): SessionDao {
         return database.sessionDao()
     }

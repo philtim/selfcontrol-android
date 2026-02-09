@@ -16,21 +16,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-data class AppInfo(
-    val packageName: String,
-    val displayName: String,
-    val isSelected: Boolean,
-    val isCuratedDistraction: Boolean = false
-)
-
-data class AppPickerUiState(
-    val searchQuery: String = "",
-    val allApps: List<AppInfo> = emptyList(),
-    val filteredApps: List<AppInfo> = emptyList(),
-    val curatedApps: List<AppInfo> = emptyList(),
-    val isLoading: Boolean = true
-)
-
 @HiltViewModel
 class AppPickerViewModel @Inject constructor(
     @ApplicationContext private val context: Context,

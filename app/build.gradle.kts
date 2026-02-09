@@ -18,6 +18,10 @@ android {
         versionName = "1.0"
     }
 
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true

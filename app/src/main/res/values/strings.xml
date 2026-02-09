@@ -100,6 +100,7 @@
     <string name="focus_channel_description">Shows the status of your active focus session</string>
     <string name="notification_title">FocusTime Active</string>
     <string name="notification_text">%1$s remaining</string>
+    <string name="notification_monitoring_apps">Monitoring blocked apps</string>
 
     <!-- Device Admin -->
     <string name="device_admin_description">FocusTime uses device admin to prevent uninstalling during active focus sessions.</string>

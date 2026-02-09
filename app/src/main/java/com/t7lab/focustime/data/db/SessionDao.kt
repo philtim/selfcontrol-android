@@ -23,9 +23,6 @@ interface SessionDao {
     suspend fun deactivateAllSessions()
 
     @Insert
-    suspend fun insertSessionItem(sessionItem: SessionItem)
-
-    @Insert
     suspend fun insertSessionItems(sessionItems: List<SessionItem>)
 
     @Query("""

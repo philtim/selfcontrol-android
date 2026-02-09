@@ -40,9 +40,6 @@ class SessionManager @Inject constructor(
             context.startForegroundService(vpnIntent)
         }
 
-        // Enable device admin if not already
-        enableDeviceAdmin()
-
         return StartSessionResult.Success(sessionId)
     }
 
@@ -66,11 +63,6 @@ class SessionManager @Inject constructor(
         val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val componentName = ComponentName(context, FocusDeviceAdminReceiver::class.java)
         return dpm.isAdminActive(componentName)
-    }
-
-    private fun enableDeviceAdmin() {
-        // Device admin needs to be enabled via user interaction (settings)
-        // This is handled in the UI before starting a session
     }
 
     sealed class StartSessionResult {

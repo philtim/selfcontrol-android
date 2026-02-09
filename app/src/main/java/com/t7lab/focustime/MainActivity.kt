@@ -36,7 +36,9 @@ import com.t7lab.focustime.ui.settings.SettingsScreen
 import com.t7lab.focustime.ui.theme.FocusTimeTheme
 import com.t7lab.focustime.ui.urlmanager.UrlManagerScreen
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -52,14 +54,21 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission()
     ) { /* Notification permission result handled */ }
 
+    private val activityScope = CoroutineScope(Dispatchers.Main)
     private var onboardingComplete by mutableStateOf<Boolean?>(null)
+
+    companion object {
+        private const val NAV_ANIM_DURATION_MS = 300
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Check onboarding status before setting content
-        onboardingComplete = runBlocking { preferencesManager.isOnboardingComplete() }
+        // Load onboarding status asynchronously
+        activityScope.launch {
+            onboardingComplete = preferencesManager.isOnboardingComplete()
+        }
 
         setContent {
             FocusTimeTheme {
@@ -71,47 +80,47 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val startDest = if (isComplete) Routes.HOME else Routes.ONBOARDING
 
-                    val animDuration = 300
-
                     NavHost(
                         navController = navController,
                         startDestination = startDest,
                         enterTransition = {
                             slideIntoContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                                animationSpec = tween(animDuration)
-                            ) + fadeIn(tween(animDuration))
+                                animationSpec = tween(NAV_ANIM_DURATION_MS)
+                            ) + fadeIn(tween(NAV_ANIM_DURATION_MS))
                         },
                         exitTransition = {
                             slideOutOfContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                                animationSpec = tween(animDuration)
-                            ) + fadeOut(tween(animDuration))
+                                animationSpec = tween(NAV_ANIM_DURATION_MS)
+                            ) + fadeOut(tween(NAV_ANIM_DURATION_MS))
                         },
                         popEnterTransition = {
                             slideIntoContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.End,
-                                animationSpec = tween(animDuration)
-                            ) + fadeIn(tween(animDuration))
+                                animationSpec = tween(NAV_ANIM_DURATION_MS)
+                            ) + fadeIn(tween(NAV_ANIM_DURATION_MS))
                         },
                         popExitTransition = {
                             slideOutOfContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.End,
-                                animationSpec = tween(animDuration)
-                            ) + fadeOut(tween(animDuration))
+                                animationSpec = tween(NAV_ANIM_DURATION_MS)
+                            ) + fadeOut(tween(NAV_ANIM_DURATION_MS))
                         }
                     ) {
                         composable(
                             Routes.ONBOARDING,
-                            enterTransition = { fadeIn(tween(animDuration)) },
-                            exitTransition = { fadeOut(tween(animDuration)) }
+                            enterTransition = { fadeIn(tween(NAV_ANIM_DURATION_MS)) },
+                            exitTransition = { fadeOut(tween(NAV_ANIM_DURATION_MS)) }
                         ) {
                             OnboardingScreen(
                                 onComplete = {
-                                    runBlocking { preferencesManager.completeOnboarding() }
-                                    onboardingComplete = true
-                                    navController.navigate(Routes.HOME) {
-                                        popUpTo(Routes.ONBOARDING) { inclusive = true }
+                                    activityScope.launch {
+                                        preferencesManager.completeOnboarding()
+                                        onboardingComplete = true
+                                        navController.navigate(Routes.HOME) {
+                                            popUpTo(Routes.ONBOARDING) { inclusive = true }
+                                        }
                                     }
                                 }
                             )

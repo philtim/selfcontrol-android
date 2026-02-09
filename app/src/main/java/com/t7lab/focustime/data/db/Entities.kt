@@ -19,7 +19,10 @@ data class BlockedItem(
     val isWildcard: Boolean = false // for URLs: *.domain.com
 )
 
-@Entity(tableName = "sessions")
+@Entity(
+    tableName = "sessions",
+    indices = [Index("isActive")]
+)
 data class Session(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val startTime: Long,

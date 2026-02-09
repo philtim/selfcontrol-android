@@ -7,6 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,16 +29,16 @@ class SettingsViewModel @Inject constructor(
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            preferencesManager.hasPassword.collect { has ->
-                _uiState.value = _uiState.value.copy(hasPassword = has)
-            }
-        }
-        viewModelScope.launch {
-            preferencesManager.isSessionActive.collect { active ->
-                _uiState.value = _uiState.value.copy(isSessionActive = active)
-            }
-        }
+        combine(
+            preferencesManager.hasPassword,
+            preferencesManager.isSessionActive
+        ) { hasPassword, isSessionActive ->
+            _uiState.value.copy(
+                hasPassword = hasPassword,
+                isSessionActive = isSessionActive
+            )
+        }.onEach { _uiState.value = it }
+            .launchIn(viewModelScope)
     }
 
     fun setPassword(newPassword: String, confirmPassword: String) {

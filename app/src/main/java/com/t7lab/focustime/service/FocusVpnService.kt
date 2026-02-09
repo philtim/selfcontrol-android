@@ -1,7 +1,6 @@
 package com.t7lab.focustime.service
 
 import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -27,9 +26,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.net.DatagramPacket
-import java.net.DatagramSocket
-import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.channels.DatagramChannel
@@ -42,6 +38,10 @@ class FocusVpnService : VpnService() {
         const val NOTIFICATION_ID = 1
         const val ACTION_START = "com.t7lab.focustime.START_VPN"
         const val ACTION_STOP = "com.t7lab.focustime.STOP_VPN"
+        private const val DNS_READ_DELAY_MS = 10L
+        private const val DNS_ERROR_DELAY_MS = 100L
+        private const val TIMER_UPDATE_INTERVAL_MS = 1000L
+        private const val VPN_RECONNECT_DELAY_MS = 1000L
 
         fun createStartIntent(context: Context): Intent {
             return Intent(context, FocusVpnService::class.java).apply {
@@ -64,7 +64,7 @@ class FocusVpnService : VpnService() {
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel()
+        // Notification channel is created in FocusTimeApp.onCreate()
 
         // Create DNS forwarding channel on main thread (avoids coroutine context restrictions)
         try {
@@ -144,7 +144,7 @@ class FocusVpnService : VpnService() {
                 buffer.clear()
                 val length = inputStream.read(buffer.array())
                 if (length <= 0) {
-                    delay(10)
+                    delay(DNS_READ_DELAY_MS)
                     continue
                 }
                 buffer.limit(length)
@@ -157,7 +157,7 @@ class FocusVpnService : VpnService() {
                 }
             } catch (e: Exception) {
                 if (!serviceScope.isActive) break
-                delay(100)
+                delay(DNS_ERROR_DELAY_MS)
             }
         }
     }
@@ -369,7 +369,7 @@ class FocusVpnService : VpnService() {
                     break
                 }
                 updateNotification(formatDuration(remaining))
-                delay(1000)
+                delay(TIMER_UPDATE_INTERVAL_MS)
             }
         }
     }
@@ -382,19 +382,6 @@ class FocusVpnService : VpnService() {
         dnsChannel = null
         vpnInterface?.close()
         vpnInterface = null
-    }
-
-    private fun createNotificationChannel() {
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            getString(R.string.focus_channel_name),
-            NotificationManager.IMPORTANCE_LOW
-        ).apply {
-            description = getString(R.string.focus_channel_description)
-            setShowBadge(false)
-        }
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(channel)
     }
 
     private fun buildNotification(timeText: String): Notification {
@@ -444,8 +431,12 @@ class FocusVpnService : VpnService() {
                 applicationContext, ServiceEntryPoint::class.java
             )
             if (entryPoint.preferencesManager().isSessionActiveOnce()) {
-                delay(1000)
-                startVpn()
+                delay(VPN_RECONNECT_DELAY_MS)
+                try {
+                    startVpn()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to reconnect VPN after revoke: ${e.message}", e)
+                }
             }
         }
     }
