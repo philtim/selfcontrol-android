@@ -1,5 +1,6 @@
 package com.t7lab.focustime.ui.apppicker
 
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
@@ -26,6 +27,9 @@ class AppPickerViewModel @Inject constructor(
     val uiState: StateFlow<AppPickerUiState> = _uiState.asStateFlow()
 
     companion object {
+        private const val FREQUENTLY_USED_COUNT = 10
+        private const val USAGE_STATS_DAYS = 30
+
         val CURATED_DISTRACTIONS = mapOf(
             "com.instagram.android" to "Instagram",
             "com.zhiliaoapp.musically" to "TikTok",
@@ -54,7 +58,7 @@ class AppPickerViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            val (allAppInfos, curatedApps) = withContext(Dispatchers.IO) {
+            val (allAppInfos, curatedApps, frequentlyUsed) = withContext(Dispatchers.IO) {
                 val pm = context.packageManager
                 val apps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
                     .filter { it.flags and ApplicationInfo.FLAG_SYSTEM == 0 || isLauncher(pm, it.packageName) }
@@ -74,6 +78,12 @@ class AppPickerViewModel @Inject constructor(
                     )
                 }
 
+                // Get frequently used apps from UsageStatsManager
+                val frequentPackages = getFrequentlyUsedPackages()
+                val frequentApps = frequentPackages
+                    .mapNotNull { pkg -> appInfos.find { it.packageName == pkg } }
+                    .take(FREQUENTLY_USED_COUNT)
+
                 val curated = CURATED_DISTRACTIONS.map { (pkg, name) ->
                     val installed = appInfos.find { it.packageName == pkg }
                     AppInfo(
@@ -84,15 +94,41 @@ class AppPickerViewModel @Inject constructor(
                     )
                 }.filter { c -> appInfos.any { it.packageName == c.packageName } }
 
-                Pair(appInfos, curated)
+                Triple(appInfos, curated, frequentApps)
             }
 
             _uiState.value = AppPickerUiState(
                 allApps = allAppInfos,
                 filteredApps = allAppInfos,
                 curatedApps = curatedApps,
+                frequentlyUsedApps = frequentlyUsed,
                 isLoading = false
             )
+        }
+    }
+
+    private fun getFrequentlyUsedPackages(): List<String> {
+        return try {
+            val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+            val endTime = System.currentTimeMillis()
+            val startTime = endTime - (USAGE_STATS_DAYS.toLong() * 24 * 60 * 60 * 1000)
+
+            val usageStats = usageStatsManager.queryUsageStats(
+                UsageStatsManager.INTERVAL_DAILY,
+                startTime,
+                endTime
+            )
+
+            usageStats
+                ?.groupBy { it.packageName }
+                ?.mapValues { (_, stats) -> stats.sumOf { it.totalTimeInForeground } }
+                ?.entries
+                ?.sortedByDescending { it.value }
+                ?.filter { it.value > 0 }
+                ?.map { it.key }
+                ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 
@@ -139,11 +175,15 @@ class AppPickerViewModel @Inject constructor(
             val updatedFiltered = _uiState.value.filteredApps.map {
                 if (it.packageName == packageName) it.copy(isSelected = !it.isSelected) else it
             }
+            val updatedFrequent = _uiState.value.frequentlyUsedApps.map {
+                if (it.packageName == packageName) it.copy(isSelected = !it.isSelected) else it
+            }
 
             _uiState.value = _uiState.value.copy(
                 allApps = updatedAll,
                 curatedApps = updatedCurated,
-                filteredApps = updatedFiltered
+                filteredApps = updatedFiltered,
+                frequentlyUsedApps = updatedFrequent
             )
         }
     }

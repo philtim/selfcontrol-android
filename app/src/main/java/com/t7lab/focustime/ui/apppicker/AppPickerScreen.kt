@@ -115,9 +115,37 @@ fun AppPickerScreen(
                 )
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    // Frequently used apps section (shown first for fast loading)
+                    if (uiState.searchQuery.isBlank() && uiState.frequentlyUsedApps.isNotEmpty()) {
+                        item(key = "frequent_header") {
+                            Text(
+                                text = "Frequently Used",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                        }
+
+                        items(
+                            items = uiState.frequentlyUsedApps,
+                            key = { "frequent_${it.packageName}" }
+                        ) { app ->
+                            AppListItem(
+                                app = app,
+                                isCurated = false,
+                                onToggle = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    viewModel.toggleApp(app.packageName)
+                                },
+                                modifier = Modifier.animateItem()
+                            )
+                        }
+                    }
+
                     // Curated distractions section
                     if (uiState.searchQuery.isBlank() && uiState.curatedApps.isNotEmpty()) {
                         item(key = "curated_header") {
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                             Text(
                                 text = "Common Distractions",
                                 style = MaterialTheme.typography.titleSmall,
@@ -140,7 +168,10 @@ fun AppPickerScreen(
                                 modifier = Modifier.animateItem()
                             )
                         }
+                    }
 
+                    // All apps section header
+                    if (uiState.searchQuery.isBlank()) {
                         item(key = "all_apps_header") {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                             Text(
