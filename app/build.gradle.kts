@@ -78,4 +78,7 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+
+    // Accompanist
+    implementation(libs.accompanist.drawablepainter)
 }

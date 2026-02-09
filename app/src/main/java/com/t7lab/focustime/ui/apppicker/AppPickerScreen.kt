@@ -1,5 +1,6 @@
 package com.t7lab.focustime.ui.apppicker
 
+import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -8,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +29,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -41,9 +44,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -173,6 +178,15 @@ private fun AppListItem(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val appIcon: Drawable? = remember(app.packageName) {
+        try {
+            context.packageManager.getApplicationIcon(app.packageName)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     ListItem(
         headlineContent = { Text(app.displayName) },
         supportingContent = {
@@ -193,12 +207,20 @@ private fun AppListItem(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
-                Icon(
-                    Icons.Default.Android,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(40.dp)
-                )
+                if (appIcon != null) {
+                    Image(
+                        painter = rememberDrawablePainter(drawable = appIcon),
+                        contentDescription = "${app.displayName} icon",
+                        modifier = Modifier.size(40.dp)
+                    )
+                } else {
+                    Icon(
+                        Icons.Default.Android,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
             }
         },
         trailingContent = {
