@@ -12,13 +12,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -28,7 +25,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -132,7 +128,6 @@ fun AppPickerScreen(
                         ) { app ->
                             AppListItem(
                                 app = app,
-                                isCurated = false,
                                 onToggle = {
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     viewModel.toggleApp(app.packageName)
@@ -140,38 +135,7 @@ fun AppPickerScreen(
                                 modifier = Modifier.animateItem()
                             )
                         }
-                    }
 
-                    // Curated distractions section
-                    if (uiState.searchQuery.isBlank() && uiState.curatedApps.isNotEmpty()) {
-                        item(key = "curated_header") {
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                            Text(
-                                text = "Common Distractions",
-                                style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                            )
-                        }
-
-                        items(
-                            items = uiState.curatedApps,
-                            key = { "curated_${it.packageName}" }
-                        ) { app ->
-                            AppListItem(
-                                app = app,
-                                isCurated = true,
-                                onToggle = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    viewModel.toggleApp(app.packageName)
-                                },
-                                modifier = Modifier.animateItem()
-                            )
-                        }
-                    }
-
-                    // All apps section header
-                    if (uiState.searchQuery.isBlank()) {
                         item(key = "all_apps_header") {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                             Text(
@@ -190,7 +154,6 @@ fun AppPickerScreen(
                     ) { app ->
                         AppListItem(
                             app = app,
-                            isCurated = false,
                             onToggle = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 viewModel.toggleApp(app.packageName)
@@ -207,7 +170,6 @@ fun AppPickerScreen(
 @Composable
 private fun AppListItem(
     app: AppInfo,
-    isCurated: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -232,30 +194,19 @@ private fun AppListItem(
             )
         },
         leadingContent = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (isCurated) {
-                    Icon(
-                        Icons.Default.Star,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                }
-                if (appIcon != null) {
-                    Image(
-                        painter = rememberDrawablePainter(drawable = appIcon),
-                        contentDescription = "${app.displayName} icon",
-                        modifier = Modifier.size(40.dp)
-                    )
-                } else {
-                    Icon(
-                        Icons.Default.Android,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
+            if (appIcon != null) {
+                Image(
+                    painter = rememberDrawablePainter(drawable = appIcon),
+                    contentDescription = "${app.displayName} icon",
+                    modifier = Modifier.size(40.dp)
+                )
+            } else {
+                Icon(
+                    Icons.Default.Android,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(40.dp)
+                )
             }
         },
         trailingContent = {
