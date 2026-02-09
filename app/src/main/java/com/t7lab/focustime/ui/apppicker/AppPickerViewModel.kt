@@ -125,7 +125,10 @@ class AppPickerViewModel @Inject constructor(
 
     fun toggleApp(packageName: String) {
         viewModelScope.launch {
-            val app = _uiState.value.allApps.find { it.packageName == packageName } ?: return@launch
+            // Check both lists since frequent apps are not in allApps
+            val app = _uiState.value.allApps.find { it.packageName == packageName }
+                ?: _uiState.value.frequentlyUsedApps.find { it.packageName == packageName }
+                ?: return@launch
 
             if (app.isSelected) {
                 // Remove from blocklist
