@@ -6,7 +6,7 @@ import com.t7lab.focustime.data.db.BlockedItem
  * Checks if a given hostname matches any of the blocked URL rules.
  *
  * Rules:
- * - "instagram.com" blocks only exact match "instagram.com"
+ * - "youtube.com" blocks "youtube.com" AND "www.youtube.com" (main domain + www)
  * - "*.youtube.com" blocks "youtube.com" AND all subdomains like "music.youtube.com"
  */
 fun isHostBlocked(hostname: String, blockedUrls: List<BlockedItem>): Boolean {
@@ -22,8 +22,8 @@ fun isHostBlocked(hostname: String, blockedUrls: List<BlockedItem>): Boolean {
                 return true
             }
         } else {
-            // Exact match only
-            if (normalizedHost == pattern) {
+            // youtube.com -> blocks youtube.com AND www.youtube.com
+            if (normalizedHost == pattern || normalizedHost == "www.$pattern") {
                 return true
             }
         }

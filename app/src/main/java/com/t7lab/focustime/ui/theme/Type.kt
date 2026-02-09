@@ -2,22 +2,14 @@ package com.t7lab.focustime.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.t7lab.focustime.R
 
-val DmSansFamily = FontFamily(
-    Font(R.font.dm_sans_regular, FontWeight.Normal),
-    Font(R.font.dm_sans_medium, FontWeight.Medium),
-    Font(R.font.dm_sans_bold, FontWeight.Bold),
-)
+// Using default system fonts until custom fonts are properly added
+val DmSansFamily = FontFamily.SansSerif
 
-val JetBrainsMonoFamily = FontFamily(
-    Font(R.font.jetbrains_mono_regular, FontWeight.Normal),
-    Font(R.font.jetbrains_mono_bold, FontWeight.Bold),
-)
+val JetBrainsMonoFamily = FontFamily.Monospace
 
 val FocusTimeTypography = Typography(
     displayLarge = TextStyle(

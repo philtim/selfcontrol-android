@@ -127,7 +127,7 @@ fun AppPickerScreen(
                                 app = app,
                                 isCurated = true,
                                 onToggle = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LightTap)
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     viewModel.toggleApp(app.packageName)
                                 },
                                 modifier = Modifier.animateItem()
@@ -154,7 +154,7 @@ fun AppPickerScreen(
                             app = app,
                             isCurated = false,
                             onToggle = {
-                                haptic.performHapticFeedback(HapticFeedbackType.LightTap)
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 viewModel.toggleApp(app.packageName)
                             },
                             modifier = Modifier.animateItem()
