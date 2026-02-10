@@ -1,5 +1,8 @@
 package com.t7lab.focustime.util
 
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 fun formatDuration(millis: Long): String {
@@ -13,6 +16,12 @@ fun formatDuration(millis: Long): String {
         hours > 0 -> "%d:%02d:%02d".format(hours, minutes, seconds)
         else -> "%d:%02d".format(minutes, seconds)
     }
+}
+
+fun formatEndTime(endTimeMs: Long): String {
+    if (endTimeMs <= 0) return ""
+    val format = SimpleDateFormat("h:mm a", Locale.getDefault())
+    return "until ${format.format(Date(endTimeMs))}"
 }
 
 fun formatDurationShort(millis: Long): String {
