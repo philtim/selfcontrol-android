@@ -4,46 +4,22 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Calm zen-inspired focus icon -->
 
-    <!-- Outer zen circle (enso-inspired, slightly open) -->
+    <!-- Circle ring with gap at 12 o'clock -->
+    <path
+        android:strokeColor="#87E3D0"
+        android:strokeWidth="2.6"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M 58.5,27.0 A 28,28 0 1 1 49.5,27.0" />
+
+    <!-- Left pause bar -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,22
-            A32,32,0,1,1,53.9,22
-            A28,28,0,1,0,54,26
-            A28,28,0,0,1,26,54
-            A28,28,0,0,1,54,26
-            L54,22 Z"
-        android:strokeWidth="0" />
+        android:pathData="M 41.4,38 L 50.6,38 L 50.6,70 L 41.4,70 Z" />
 
-    <!-- Clean outer ring -->
+    <!-- Right pause bar -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,20 A34,34,0,1,1,53.9,20 Z" />
-
-    <!-- Inner calm space (dark green) -->
-    <path
-        android:fillColor="#0D503A"
-        android:pathData="M54,26 A28,28,0,1,1,53.9,26 Z" />
-
-    <!-- Gentle leaf/petal shape representing growth and calm -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:fillAlpha="0.95"
-        android:pathData="M54,38
-            Q64,48 64,58
-            Q64,68 54,74
-            Q44,68 44,58
-            Q44,48 54,38 Z" />
-
-    <!-- Subtle center stem/vein for the leaf -->
-    <path
-        android:fillColor="#0D503A"
-        android:pathData="M53,44 L55,44 L55,68 L53,68 Z" />
-
-    <!-- Small circle at top representing mindfulness/focus point -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,32 A3,3,0,1,1,53.9,32 Z" />
+        android:pathData="M 57.4,38 L 66.6,38 L 66.6,70 L 57.4,70 Z" />
 </vector>
