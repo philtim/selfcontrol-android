@@ -67,6 +67,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -275,7 +276,7 @@ private fun ActiveSessionScreen(
         ) {
             Icon(
                 Icons.Default.Lock,
-                contentDescription = "Emergency unlock",
+                contentDescription = stringResource(R.string.emergency_unlock),
                 modifier = Modifier.size(12.dp),
                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
             )
@@ -314,7 +315,7 @@ private fun UnlockConfirmationSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Break focus session?",
+                text = stringResource(R.string.break_focus_session),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -322,7 +323,7 @@ private fun UnlockConfirmationSheet(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Breaking focus early reduces effectiveness. Are you sure you want to unlock?",
+                text = stringResource(R.string.break_focus_warning),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -334,7 +335,7 @@ private fun UnlockConfirmationSheet(
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Keep focusing")
+                Text(stringResource(R.string.keep_focusing))
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -344,7 +345,7 @@ private fun UnlockConfirmationSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "Emergency override",
+                    stringResource(R.string.emergency_override),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )
@@ -369,10 +370,10 @@ private fun SetupScreen(
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                title = { Text("FocusTime") },
+                title = { Text(stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -471,13 +472,13 @@ private fun StartFocusButton(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Start Focus",
+                    text = stringResource(R.string.start_focus),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
             if (isReady) {
                 Text(
-                    text = "$itemCount items to block",
+                    text = stringResource(R.string.items_to_block, itemCount),
                     style = MaterialTheme.typography.bodySmall,
                     color = LocalContentColor.current.copy(alpha = 0.8f)
                 )
@@ -496,25 +497,25 @@ private fun PasswordUnlockDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Emergency Override") },
+        title = { Text(stringResource(R.string.emergency_override_title)) },
         text = {
             Column {
                 Text(
-                    text = "Enter the master password to end this focus session early.",
+                    text = stringResource(R.string.emergency_override_description),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Password") },
+                    label = { Text(stringResource(R.string.password)) },
                     visualTransformation = PasswordVisualTransformation(),
                     singleLine = true,
                     isError = result == PasswordUnlockResult.WRONG_PASSWORD,
                     supportingText = {
                         when (result) {
-                            PasswordUnlockResult.WRONG_PASSWORD -> Text("Incorrect password")
-                            PasswordUnlockResult.NO_PASSWORD_SET -> Text("No master password has been set")
+                            PasswordUnlockResult.WRONG_PASSWORD -> Text(stringResource(R.string.incorrect_password))
+                            PasswordUnlockResult.NO_PASSWORD_SET -> Text(stringResource(R.string.no_password_has_been_set))
                             else -> {}
                         }
                     },
@@ -527,12 +528,12 @@ private fun PasswordUnlockDialog(
                 onClick = { onSubmit(password) },
                 enabled = password.isNotEmpty()
             ) {
-                Text("Unlock")
+                Text(stringResource(R.string.unlock))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

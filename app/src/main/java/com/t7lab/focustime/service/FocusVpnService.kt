@@ -89,7 +89,7 @@ class FocusVpnService : VpnService() {
                 return START_NOT_STICKY
             }
             ACTION_START, null -> {
-                startForeground(NOTIFICATION_ID, buildNotification("Starting..."))
+                startForeground(NOTIFICATION_ID, buildNotification(getString(R.string.notification_starting)))
                 serviceScope.launch {
                     loadBlockedUrls()
                     startVpn()

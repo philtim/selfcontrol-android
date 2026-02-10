@@ -36,10 +36,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.t7lab.focustime.R
 import com.t7lab.focustime.ui.components.BlockedItemChip
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -53,10 +55,10 @@ fun UrlManagerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Manage URLs") },
+                title = { Text(stringResource(R.string.manage_urls)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -78,12 +80,12 @@ fun UrlManagerScreen(
                 OutlinedTextField(
                     value = uiState.inputText,
                     onValueChange = viewModel::updateInput,
-                    label = { Text("Enter domain") },
-                    placeholder = { Text("e.g. instagram.com or *.youtube.com") },
+                    label = { Text(stringResource(R.string.enter_domain)) },
+                    placeholder = { Text(stringResource(R.string.enter_url_placeholder)) },
                     singleLine = true,
-                    isError = uiState.errorMessage != null,
-                    supportingText = uiState.errorMessage?.let { error ->
-                        { Text(error) }
+                    isError = uiState.errorMessageRes != null,
+                    supportingText = uiState.errorMessageRes?.let { resId ->
+                        { Text(stringResource(resId)) }
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Uri,
@@ -104,7 +106,7 @@ fun UrlManagerScreen(
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Add")
+                    Text(stringResource(R.string.add))
                 }
             }
 
@@ -127,14 +129,13 @@ fun UrlManagerScreen(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "URL Blocking Rules",
+                            text = stringResource(R.string.url_blocking_rules),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "youtube.com \u2192 blocks only youtube.com\n" +
-                                    "*.youtube.com \u2192 blocks youtube.com and all subdomains",
+                            text = stringResource(R.string.url_blocking_rules_explanation),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
@@ -145,7 +146,7 @@ fun UrlManagerScreen(
             // Current URLs
             if (uiState.urls.isNotEmpty()) {
                 Text(
-                    text = "Blocked URLs",
+                    text = stringResource(R.string.blocked_urls),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -163,7 +164,7 @@ fun UrlManagerScreen(
                 }
             } else {
                 Text(
-                    text = "No URLs added yet. Add domains above to block them during focus sessions.",
+                    text = stringResource(R.string.no_urls_added),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )

@@ -47,8 +47,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.t7lab.focustime.R
 import com.t7lab.focustime.ui.components.ShimmerAppListPlaceholder
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,10 +65,10 @@ fun AppPickerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Select Apps to Block") },
+                title = { Text(stringResource(R.string.select_apps)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -86,12 +88,12 @@ fun AppPickerScreen(
                         onSearch = {},
                         expanded = false,
                         onExpandedChange = {},
-                        placeholder = { Text("Search apps\u2026") },
+                        placeholder = { Text(stringResource(R.string.search_apps)) },
                         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                         trailingIcon = {
                             if (uiState.searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { viewModel.updateSearchQuery("") }) {
-                                    Icon(Icons.Default.Clear, contentDescription = "Clear")
+                                    Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.clear))
                                 }
                             }
                         }
@@ -114,7 +116,7 @@ fun AppPickerScreen(
                     if (uiState.searchQuery.isBlank() && uiState.frequentlyUsedApps.isNotEmpty()) {
                         item(key = "frequent_header") {
                             Text(
-                                text = "Frequently Used",
+                                text = stringResource(R.string.frequently_used),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -138,7 +140,7 @@ fun AppPickerScreen(
                         item(key = "all_apps_header") {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                             Text(
-                                text = "All Apps",
+                                text = stringResource(R.string.all_apps),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -189,7 +191,7 @@ private fun AppListItem(
             if (appIcon != null) {
                 Image(
                     painter = rememberDrawablePainter(drawable = appIcon),
-                    contentDescription = "${app.displayName} icon",
+                    contentDescription = stringResource(R.string.app_icon_description, app.displayName),
                     modifier = Modifier.size(40.dp)
                 )
             } else {
@@ -233,7 +235,7 @@ private fun SelectionIcon(isSelected: Boolean) {
         Icon(
             imageVector = if (selected) Icons.Default.CheckCircle
             else Icons.Default.RadioButtonUnchecked,
-            contentDescription = if (selected) "Selected" else "Not selected",
+            contentDescription = if (selected) stringResource(R.string.selected) else stringResource(R.string.not_selected),
             tint = if (selected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.onSurfaceVariant
         )

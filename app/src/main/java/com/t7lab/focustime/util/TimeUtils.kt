@@ -1,5 +1,8 @@
 package com.t7lab.focustime.util
 
+import android.content.Context
+import androidx.annotation.StringRes
+import com.t7lab.focustime.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -18,35 +21,35 @@ fun formatDuration(millis: Long): String {
     }
 }
 
-fun formatEndTime(endTimeMs: Long): String {
+fun formatEndTime(endTimeMs: Long, context: Context): String {
     if (endTimeMs <= 0) return ""
     val format = SimpleDateFormat("h:mm a", Locale.getDefault())
-    return "until ${format.format(Date(endTimeMs))}"
+    return context.getString(R.string.until_time_format, format.format(Date(endTimeMs)))
 }
 
-fun formatDurationShort(millis: Long): String {
+fun formatDurationShort(millis: Long, context: Context): String {
     val hours = TimeUnit.MILLISECONDS.toHours(millis)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60
 
     return when {
-        hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
-        hours > 0 -> "${hours}h"
-        else -> "${minutes}m"
+        hours > 0 && minutes > 0 -> context.getString(R.string.duration_hours_minutes, hours, minutes)
+        hours > 0 -> context.getString(R.string.duration_hours_only, hours)
+        else -> context.getString(R.string.duration_minutes_only, minutes)
     }
 }
 
 data class DurationOption(
-    val label: String,
+    @StringRes val labelRes: Int,
     val durationMs: Long
 )
 
 val DURATION_OPTIONS = listOf(
-    DurationOption("30 min", TimeUnit.MINUTES.toMillis(30)),
-    DurationOption("1 hour", TimeUnit.HOURS.toMillis(1)),
-    DurationOption("2 hours", TimeUnit.HOURS.toMillis(2)),
-    DurationOption("4 hours", TimeUnit.HOURS.toMillis(4)),
-    DurationOption("6 hours", TimeUnit.HOURS.toMillis(6)),
-    DurationOption("8 hours", TimeUnit.HOURS.toMillis(8)),
+    DurationOption(R.string.duration_30_min, TimeUnit.MINUTES.toMillis(30)),
+    DurationOption(R.string.duration_1_hour, TimeUnit.HOURS.toMillis(1)),
+    DurationOption(R.string.duration_2_hours, TimeUnit.HOURS.toMillis(2)),
+    DurationOption(R.string.duration_4_hours, TimeUnit.HOURS.toMillis(4)),
+    DurationOption(R.string.duration_6_hours, TimeUnit.HOURS.toMillis(6)),
+    DurationOption(R.string.duration_8_hours, TimeUnit.HOURS.toMillis(8)),
 )
 
 fun isValidDomain(input: String): Boolean {

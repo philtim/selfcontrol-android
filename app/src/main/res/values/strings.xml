@@ -25,6 +25,21 @@
     <string name="unlock_with_password">Unlock with password</string>
     <string name="session_ended">Focus session ended!</string>
     <string name="session_ended_body">Great job staying focused! Your apps and URLs are now unblocked.</string>
+    <string name="items_to_block">%1$d items to block</string>
+    <string name="emergency_unlock">Emergency unlock</string>
+    <string name="break_focus_session">Break focus session?</string>
+    <string name="break_focus_warning">Breaking focus early reduces effectiveness. Are you sure you want to unlock?</string>
+    <string name="keep_focusing">Keep focusing</string>
+    <string name="emergency_override">Emergency override</string>
+    <string name="emergency_override_title">Emergency Override</string>
+    <string name="emergency_override_description">Enter the master password to end this focus session early.</string>
+    <string name="password">Password</string>
+    <string name="incorrect_password">Incorrect password</string>
+    <string name="no_password_has_been_set">No master password has been set</string>
+    <string name="unlock">Unlock</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="items_summary">%1$d items \u2022 %2$s</string>
 
     <!-- Session Complete -->
     <string name="well_done">Well Done!</string>
@@ -49,13 +64,25 @@
     <string name="common_distractions">Common Distractions</string>
     <string name="all_apps">All Apps</string>
     <string name="done">Done</string>
+    <string name="frequently_used">Frequently Used</string>
+    <string name="app_icon_description">%1$s icon</string>
+    <string name="selected">Selected</string>
+    <string name="not_selected">Not selected</string>
+    <string name="clear">Clear</string>
+    <string name="back">Back</string>
 
     <!-- URL Manager -->
     <string name="manage_urls">Manage URLs</string>
+    <string name="enter_domain">Enter domain</string>
     <string name="enter_url_hint">Enter domain (e.g. instagram.com or *.youtube.com)</string>
+    <string name="enter_url_placeholder">e.g. instagram.com or *.youtube.com</string>
     <string name="add">Add</string>
     <string name="invalid_url">Invalid URL format</string>
+    <string name="invalid_domain_format">Invalid domain format. Use e.g. instagram.com or *.youtube.com</string>
     <string name="wildcard_hint">Use *.domain.com to block domain and all subdomains</string>
+    <string name="url_blocking_rules">URL Blocking Rules</string>
+    <string name="url_blocking_rules_explanation">youtube.com \u2192 blocks only youtube.com\n*.youtube.com \u2192 blocks youtube.com and all subdomains</string>
+    <string name="no_urls_added">No URLs added yet. Add domains above to block them during focus sessions.</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
@@ -63,27 +90,35 @@
     <string name="set_password">Set Password</string>
     <string name="change_password">Change Password</string>
     <string name="remove_password">Remove Password</string>
-    <string name="confirm_remove_password">Enter current password to confirm removal</string>
+    <string name="confirm_remove_password">Enter your current password to confirm removal.</string>
     <string name="current_password">Current password</string>
     <string name="new_password">New password</string>
     <string name="confirm_password">Confirm password</string>
+    <string name="confirm_new_password">Confirm new password</string>
     <string name="password_set_success">Password set successfully</string>
     <string name="password_changed_success">Password changed successfully</string>
     <string name="password_removed_success">Password removed</string>
     <string name="passwords_dont_match">Passwords don\'t match</string>
     <string name="wrong_password">Incorrect password</string>
+    <string name="current_password_incorrect">Current password is incorrect</string>
     <string name="password_too_short">Password must be at least 4 characters</string>
     <string name="cannot_change_during_session">Cannot change password during an active session</string>
+    <string name="cannot_remove_during_session">Cannot remove password during an active session</string>
     <string name="no_password_set">No master password set</string>
-    <string name="password_description">Set a master password to allow unlocking focus sessions early. Share it with someone you trust.</string>
+    <string name="password_description">Set a master password to allow unlocking focus sessions early. Share it with someone you trust so you can\'t unlock it yourself.</string>
+    <string name="password_is_set">Password is set</string>
+    <string name="password_session_active_warning">Password settings cannot be changed during an active focus session.</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
     <string name="about">About</string>
     <string name="version_format">Version %1$s</string>
     <string name="made_by">Made by T7Lab</string>
 
     <!-- Blocked overlay -->
     <string name="focus_mode_active">You\'re in Focus Mode</string>
-    <string name="app_blocked_named">%1$s is blocked for another</string>
-    <string name="app_blocked_generic">This app is blocked during your focus session</string>
+    <string name="app_blocked_named">%1$s is blocked</string>
+    <string name="app_blocked_generic">This app is blocked</string>
+    <string name="return_home">Return Home</string>
     <string name="return_to_home">Return to Home Screen</string>
     <string name="enter_password_to_unlock">Enter password to unlock</string>
 
@@ -91,6 +126,34 @@
     <string name="app_blocked_title">App Blocked</string>
     <string name="app_blocked_message">This app is blocked during your focus session.\n\nTime remaining: %1$s</string>
     <string name="go_back">Go Back</string>
+
+    <!-- Duration -->
+    <string name="how_long">How long?</string>
+    <string name="set_custom_duration">Set Custom Duration</string>
+    <string name="hours_minutes">Hours : Minutes</string>
+    <string name="set">Set</string>
+    <string name="duration_30_min">30 min</string>
+    <string name="duration_1_hour">1 hour</string>
+    <string name="duration_2_hours">2 hours</string>
+    <string name="duration_4_hours">4 hours</string>
+    <string name="duration_6_hours">6 hours</string>
+    <string name="duration_8_hours">8 hours</string>
+    <string name="until_time_format">until %1$s</string>
+    <string name="duration_hours_minutes">%1$dh %2$dm</string>
+    <string name="duration_hours_only">%1$dh</string>
+    <string name="duration_minutes_only">%1$dm</string>
+
+    <!-- BlockedItemChip -->
+    <string name="remove">Remove</string>
+
+    <!-- Tabs -->
+    <string name="apps_tab_count">Apps (%1$d)</string>
+    <string name="apps_tab">Apps</string>
+    <string name="urls_tab_count">URLs (%1$d)</string>
+    <string name="urls_tab">URLs</string>
+
+    <!-- Notification starting -->
+    <string name="notification_starting">Starting\u2026</string>
 
     <!-- Permissions -->
     <string name="usage_access_needed">Usage access permission is needed to detect blocked apps.</string>
@@ -109,4 +172,40 @@
 
     <!-- Device Admin -->
     <string name="device_admin_description">FocusTime uses device admin to prevent uninstalling during active focus sessions.</string>
+
+    <!-- Motivational Quotes -->
+    <string-array name="motivational_quote_texts">
+        <item>The secret of getting ahead is getting started.</item>
+        <item>Focus on being productive instead of busy.</item>
+        <item>It is during our darkest moments that we must focus to see the light.</item>
+        <item>Concentrate all your thoughts upon the work at hand.</item>
+        <item>The successful warrior is the average man, with laser-like focus.</item>
+        <item>Where focus goes, energy flows.</item>
+        <item>Do what you can, with what you have, where you are.</item>
+        <item>The only way to do great work is to love what you do.</item>
+        <item>You don\'t have to be great to start, but you have to start to be great.</item>
+        <item>Starve your distractions, feed your focus.</item>
+        <item>Almost everything will work again if you unplug it for a few minutes, including you.</item>
+        <item>Your future is created by what you do today, not tomorrow.</item>
+        <item>Simplicity is the ultimate sophistication.</item>
+        <item>Deep work is the ability to focus without distraction on a cognitively demanding task.</item>
+        <item>You will never reach your destination if you stop and throw stones at every dog that barks.</item>
+    </string-array>
+    <string-array name="motivational_quote_authors">
+        <item>Mark Twain</item>
+        <item>Tim Ferriss</item>
+        <item>Aristotle</item>
+        <item>Alexander Graham Bell</item>
+        <item>Bruce Lee</item>
+        <item>Tony Robbins</item>
+        <item>Theodore Roosevelt</item>
+        <item>Steve Jobs</item>
+        <item>Zig Ziglar</item>
+        <item>Daniel Goleman</item>
+        <item>Anne Lamott</item>
+        <item>Robert Kiyosaki</item>
+        <item>Leonardo da Vinci</item>
+        <item>Cal Newport</item>
+        <item>Winston Churchill</item>
+    </string-array>
 </resources>
