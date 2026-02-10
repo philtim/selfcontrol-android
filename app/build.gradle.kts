@@ -22,6 +22,21 @@ android {
         arg("room.schemaLocation", "$projectDir/schemas")
     }
 
+    signingConfigs {
+        create("release") {
+            // Configure via environment variables or local keystore.properties:
+            //   FOCUSTIME_KEYSTORE_FILE, FOCUSTIME_KEYSTORE_PASSWORD,
+            //   FOCUSTIME_KEY_ALIAS, FOCUSTIME_KEY_PASSWORD
+            val keystoreFile = System.getenv("FOCUSTIME_KEYSTORE_FILE")
+            if (keystoreFile != null) {
+                storeFile = file(keystoreFile)
+                storePassword = System.getenv("FOCUSTIME_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("FOCUSTIME_KEY_ALIAS")
+                keyPassword = System.getenv("FOCUSTIME_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -29,6 +44,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
