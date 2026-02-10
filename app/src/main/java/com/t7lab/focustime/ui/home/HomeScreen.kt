@@ -510,11 +510,13 @@ private fun PasswordUnlockDialog(
                     label = { Text("Password") },
                     visualTransformation = PasswordVisualTransformation(),
                     singleLine = true,
-                    isError = result == PasswordUnlockResult.WRONG_PASSWORD,
+                    isError = result == PasswordUnlockResult.WRONG_PASSWORD ||
+                            result == PasswordUnlockResult.LOCKED_OUT,
                     supportingText = {
                         when (result) {
                             PasswordUnlockResult.WRONG_PASSWORD -> Text("Incorrect password")
                             PasswordUnlockResult.NO_PASSWORD_SET -> Text("No master password has been set")
+                            PasswordUnlockResult.LOCKED_OUT -> Text("Too many attempts. Try again later.")
                             else -> {}
                         }
                     },

@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -37,7 +38,7 @@ class AppPickerViewModel @Inject constructor(
 
     private fun loadApps() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.update { it.copy(isLoading = true) }
 
             val (allAppInfos, frequentlyUsed) = withContext(Dispatchers.IO) {
                 val pm = context.packageManager
@@ -71,12 +72,14 @@ class AppPickerViewModel @Inject constructor(
                 Pair(remainingApps, frequentApps)
             }
 
-            _uiState.value = AppPickerUiState(
-                allApps = allAppInfos,
-                filteredApps = allAppInfos,
-                frequentlyUsedApps = frequentlyUsed,
-                isLoading = false
-            )
+            _uiState.update {
+                AppPickerUiState(
+                    allApps = allAppInfos,
+                    filteredApps = allAppInfos,
+                    frequentlyUsedApps = frequentlyUsed,
+                    isLoading = false
+                )
+            }
         }
     }
 
@@ -110,17 +113,19 @@ class AppPickerViewModel @Inject constructor(
     }
 
     fun updateSearchQuery(query: String) {
-        _uiState.value = _uiState.value.copy(
-            searchQuery = query,
-            filteredApps = if (query.isBlank()) {
-                _uiState.value.allApps
-            } else {
-                _uiState.value.allApps.filter {
-                    it.displayName.contains(query, ignoreCase = true) ||
-                            it.packageName.contains(query, ignoreCase = true)
+        _uiState.update { state ->
+            state.copy(
+                searchQuery = query,
+                filteredApps = if (query.isBlank()) {
+                    state.allApps
+                } else {
+                    state.allApps.filter {
+                        it.displayName.contains(query, ignoreCase = true) ||
+                                it.packageName.contains(query, ignoreCase = true)
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     fun toggleApp(packageName: String) {
@@ -141,22 +146,20 @@ class AppPickerViewModel @Inject constructor(
                 blocklistRepository.addApp(packageName, app.displayName)
             }
 
-            // Update local state
-            val updatedAll = _uiState.value.allApps.map {
-                if (it.packageName == packageName) it.copy(isSelected = !it.isSelected) else it
+            // Update local state atomically
+            _uiState.update { state ->
+                state.copy(
+                    allApps = state.allApps.map {
+                        if (it.packageName == packageName) it.copy(isSelected = !it.isSelected) else it
+                    },
+                    filteredApps = state.filteredApps.map {
+                        if (it.packageName == packageName) it.copy(isSelected = !it.isSelected) else it
+                    },
+                    frequentlyUsedApps = state.frequentlyUsedApps.map {
+                        if (it.packageName == packageName) it.copy(isSelected = !it.isSelected) else it
+                    }
+                )
             }
-            val updatedFiltered = _uiState.value.filteredApps.map {
-                if (it.packageName == packageName) it.copy(isSelected = !it.isSelected) else it
-            }
-            val updatedFrequent = _uiState.value.frequentlyUsedApps.map {
-                if (it.packageName == packageName) it.copy(isSelected = !it.isSelected) else it
-            }
-
-            _uiState.value = _uiState.value.copy(
-                allApps = updatedAll,
-                filteredApps = updatedFiltered,
-                frequentlyUsedApps = updatedFrequent
-            )
         }
     }
 }

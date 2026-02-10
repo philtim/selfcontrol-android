@@ -273,9 +273,13 @@ private fun BlockedScreen(
                         OutlinedButton(
                             onClick = {
                                 scope.launch {
-                                    if (preferencesManager.verifyPassword(password)) {
+                                    if (preferencesManager.isPasswordLocked()) {
+                                        passwordError = "Too many attempts. Try again later."
+                                    } else if (preferencesManager.verifyPassword(password)) {
                                         sessionManager.endSession()
                                         onUnlocked()
+                                    } else if (preferencesManager.isPasswordLocked()) {
+                                        passwordError = "Too many attempts. Try again later."
                                     } else {
                                         passwordError = "Incorrect password"
                                     }

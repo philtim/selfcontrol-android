@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,13 +30,13 @@ class UrlManagerViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             blocklistRepository.getUrls().collect { urls ->
-                _uiState.value = _uiState.value.copy(urls = urls)
+                _uiState.update { it.copy(urls = urls) }
             }
         }
     }
 
     fun updateInput(text: String) {
-        _uiState.value = _uiState.value.copy(inputText = text, errorMessage = null)
+        _uiState.update { it.copy(inputText = text, errorMessage = null) }
     }
 
     fun addUrl() {
@@ -51,15 +52,15 @@ class UrlManagerViewModel @Inject constructor(
             .trimEnd('/')
 
         if (!isValidDomain(cleaned)) {
-            _uiState.value = _uiState.value.copy(
-                errorMessage = "Invalid domain format. Use e.g. instagram.com or *.youtube.com"
-            )
+            _uiState.update {
+                it.copy(errorMessage = "Invalid domain format. Use e.g. instagram.com or *.youtube.com")
+            }
             return
         }
 
         viewModelScope.launch {
             blocklistRepository.addUrl(cleaned)
-            _uiState.value = _uiState.value.copy(inputText = "", errorMessage = null)
+            _uiState.update { it.copy(inputText = "", errorMessage = null) }
         }
     }
 

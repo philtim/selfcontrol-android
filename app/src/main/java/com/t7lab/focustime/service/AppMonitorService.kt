@@ -34,6 +34,7 @@ class AppMonitorService : Service() {
         const val ACTION_START = "com.t7lab.focustime.START_MONITOR"
         const val ACTION_STOP = "com.t7lab.focustime.STOP_MONITOR"
         private const val FOREGROUND_APP_POLL_INTERVAL_MS = 500L
+        private const val PENDING_INTENT_MONITOR_REQUEST_CODE = 200
 
         fun createStartIntent(context: Context): Intent {
             return Intent(context, AppMonitorService::class.java).apply {
@@ -145,7 +146,7 @@ class AppMonitorService : Service() {
     private fun buildNotification(): Notification {
         val pendingIntent = PendingIntent.getActivity(
             this,
-            0,
+            PENDING_INTENT_MONITOR_REQUEST_CODE,
             Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -153,7 +154,7 @@ class AppMonitorService : Service() {
         return Notification.Builder(this, FocusVpnService.CHANNEL_ID)
             .setContentTitle(getString(R.string.notification_title))
             .setContentText(getString(R.string.notification_monitoring_apps))
-            .setSmallIcon(android.R.drawable.ic_lock_idle_lock)
+            .setSmallIcon(R.drawable.ic_notification)
             .setOngoing(true)
             .setContentIntent(pendingIntent)
             .setCategory(Notification.CATEGORY_SERVICE)

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,117 +34,108 @@ class SettingsViewModel @Inject constructor(
             preferencesManager.hasPassword,
             preferencesManager.isSessionActive
         ) { hasPassword, isSessionActive ->
-            _uiState.value.copy(
+            SettingsUiState(
                 hasPassword = hasPassword,
                 isSessionActive = isSessionActive
             )
-        }.onEach { _uiState.value = it }
-            .launchIn(viewModelScope)
+        }.onEach { newState ->
+            _uiState.update {
+                it.copy(hasPassword = newState.hasPassword, isSessionActive = newState.isSessionActive)
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun setPassword(newPassword: String, confirmPassword: String) {
         if (_uiState.value.isSessionActive) {
-            _uiState.value = _uiState.value.copy(
-                message = "Cannot change password during an active session",
-                isError = true
-            )
+            _uiState.update {
+                it.copy(message = "Cannot change password during an active session", isError = true)
+            }
             return
         }
 
         if (newPassword.length < 4) {
-            _uiState.value = _uiState.value.copy(
-                message = "Password must be at least 4 characters",
-                isError = true
-            )
+            _uiState.update {
+                it.copy(message = "Password must be at least 4 characters", isError = true)
+            }
             return
         }
 
         if (newPassword != confirmPassword) {
-            _uiState.value = _uiState.value.copy(
-                message = "Passwords don't match",
-                isError = true
-            )
+            _uiState.update {
+                it.copy(message = "Passwords don't match", isError = true)
+            }
             return
         }
 
         viewModelScope.launch {
             preferencesManager.setPassword(newPassword)
-            _uiState.value = _uiState.value.copy(
-                message = "Password set successfully",
-                isError = false
-            )
+            _uiState.update {
+                it.copy(message = "Password set successfully", isError = false)
+            }
         }
     }
 
     fun changePassword(currentPassword: String, newPassword: String, confirmPassword: String) {
         if (_uiState.value.isSessionActive) {
-            _uiState.value = _uiState.value.copy(
-                message = "Cannot change password during an active session",
-                isError = true
-            )
+            _uiState.update {
+                it.copy(message = "Cannot change password during an active session", isError = true)
+            }
             return
         }
 
         if (newPassword.length < 4) {
-            _uiState.value = _uiState.value.copy(
-                message = "Password must be at least 4 characters",
-                isError = true
-            )
+            _uiState.update {
+                it.copy(message = "Password must be at least 4 characters", isError = true)
+            }
             return
         }
 
         if (newPassword != confirmPassword) {
-            _uiState.value = _uiState.value.copy(
-                message = "Passwords don't match",
-                isError = true
-            )
+            _uiState.update {
+                it.copy(message = "Passwords don't match", isError = true)
+            }
             return
         }
 
         viewModelScope.launch {
             if (!preferencesManager.verifyPassword(currentPassword)) {
-                _uiState.value = _uiState.value.copy(
-                    message = "Current password is incorrect",
-                    isError = true
-                )
+                _uiState.update {
+                    it.copy(message = "Current password is incorrect", isError = true)
+                }
                 return@launch
             }
 
             preferencesManager.setPassword(newPassword)
-            _uiState.value = _uiState.value.copy(
-                message = "Password changed successfully",
-                isError = false
-            )
+            _uiState.update {
+                it.copy(message = "Password changed successfully", isError = false)
+            }
         }
     }
 
     fun removePassword(currentPassword: String) {
         if (_uiState.value.isSessionActive) {
-            _uiState.value = _uiState.value.copy(
-                message = "Cannot remove password during an active session",
-                isError = true
-            )
+            _uiState.update {
+                it.copy(message = "Cannot remove password during an active session", isError = true)
+            }
             return
         }
 
         viewModelScope.launch {
             if (!preferencesManager.verifyPassword(currentPassword)) {
-                _uiState.value = _uiState.value.copy(
-                    message = "Incorrect password",
-                    isError = true
-                )
+                _uiState.update {
+                    it.copy(message = "Incorrect password", isError = true)
+                }
                 return@launch
             }
 
             preferencesManager.removePassword()
-            _uiState.value = _uiState.value.copy(
-                message = "Password removed",
-                isError = false
-            )
+            _uiState.update {
+                it.copy(message = "Password removed", isError = false)
+            }
         }
     }
 
     fun clearMessage() {
-        _uiState.value = _uiState.value.copy(message = null, isError = false)
+        _uiState.update { it.copy(message = null, isError = false) }
     }
 }

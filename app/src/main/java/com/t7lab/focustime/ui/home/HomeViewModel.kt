@@ -14,6 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,7 +33,8 @@ data class HomeUiState(
 enum class PasswordUnlockResult {
     SUCCESS,
     WRONG_PASSWORD,
-    NO_PASSWORD_SET
+    NO_PASSWORD_SET,
+    LOCKED_OUT
 }
 
 @HiltViewModel
@@ -56,10 +58,9 @@ class HomeViewModel @Inject constructor(
     private fun observeSession() {
         viewModelScope.launch {
             sessionRepository.getActiveSession().collect { session ->
-                _uiState.value = _uiState.value.copy(
-                    activeSession = session,
-                    isSessionActive = session != null
-                )
+                _uiState.update {
+                    it.copy(activeSession = session, isSessionActive = session != null)
+                }
             }
         }
     }
@@ -67,7 +68,7 @@ class HomeViewModel @Inject constructor(
     private fun observeBlocklist() {
         viewModelScope.launch {
             blocklistRepository.getAllItems().collect { items ->
-                _uiState.value = _uiState.value.copy(blockedItems = items)
+                _uiState.update { it.copy(blockedItems = items) }
             }
         }
     }
@@ -76,10 +77,9 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val completedMs = preferencesManager.getLastCompletedDuration()
             if (completedMs > 0) {
-                _uiState.value = _uiState.value.copy(
-                    showSessionComplete = true,
-                    completedDurationMs = completedMs
-                )
+                _uiState.update {
+                    it.copy(showSessionComplete = true, completedDurationMs = completedMs)
+                }
             }
         }
     }
@@ -94,15 +94,17 @@ class HomeViewModel @Inject constructor(
                         val durationMs = session.durationMs
                         sessionManager.endSession()
                         preferencesManager.setLastCompletedDuration(durationMs)
-                        _uiState.value = _uiState.value.copy(
-                            remainingTimeMs = 0L,
-                            isSessionActive = false,
-                            activeSession = null,
-                            showSessionComplete = true,
-                            completedDurationMs = durationMs
-                        )
+                        _uiState.update {
+                            it.copy(
+                                remainingTimeMs = 0L,
+                                isSessionActive = false,
+                                activeSession = null,
+                                showSessionComplete = true,
+                                completedDurationMs = durationMs
+                            )
+                        }
                     } else {
-                        _uiState.value = _uiState.value.copy(remainingTimeMs = remaining)
+                        _uiState.update { it.copy(remainingTimeMs = remaining) }
                     }
                 }
                 delay(1000)
@@ -114,20 +116,18 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             preferencesManager.clearLastCompletedDuration()
         }
-        _uiState.value = _uiState.value.copy(
-            showSessionComplete = false,
-            completedDurationMs = 0L
-        )
+        _uiState.update {
+            it.copy(showSessionComplete = false, completedDurationMs = 0L)
+        }
     }
 
     fun selectDuration(durationMs: Long) {
-        _uiState.value = _uiState.value.copy(selectedDurationMs = durationMs)
+        _uiState.update { it.copy(selectedDurationMs = durationMs) }
     }
 
     fun startSession(onVpnPermissionNeeded: () -> Unit) {
         val duration = _uiState.value.selectedDurationMs ?: return
 
-        // Check if we need VPN permission (when blocking URLs)
         val hasUrls = _uiState.value.blockedItems.any { it.type == BlockedItemType.URL }
         if (hasUrls && !sessionManager.isVpnPermissionGranted()) {
             onVpnPermissionNeeded()
@@ -148,26 +148,36 @@ class HomeViewModel @Inject constructor(
     fun tryUnlockWithPassword(password: String) {
         viewModelScope.launch {
             if (!preferencesManager.hasPasswordSet()) {
-                _uiState.value = _uiState.value.copy(
-                    passwordUnlockResult = PasswordUnlockResult.NO_PASSWORD_SET
-                )
+                _uiState.update {
+                    it.copy(passwordUnlockResult = PasswordUnlockResult.NO_PASSWORD_SET)
+                }
+                return@launch
+            }
+
+            if (preferencesManager.isPasswordLocked()) {
+                _uiState.update {
+                    it.copy(passwordUnlockResult = PasswordUnlockResult.LOCKED_OUT)
+                }
                 return@launch
             }
 
             if (preferencesManager.verifyPassword(password)) {
                 sessionManager.endSession()
-                _uiState.value = _uiState.value.copy(
-                    passwordUnlockResult = PasswordUnlockResult.SUCCESS
-                )
+                _uiState.update {
+                    it.copy(passwordUnlockResult = PasswordUnlockResult.SUCCESS)
+                }
             } else {
-                _uiState.value = _uiState.value.copy(
-                    passwordUnlockResult = PasswordUnlockResult.WRONG_PASSWORD
-                )
+                val result = if (preferencesManager.isPasswordLocked()) {
+                    PasswordUnlockResult.LOCKED_OUT
+                } else {
+                    PasswordUnlockResult.WRONG_PASSWORD
+                }
+                _uiState.update { it.copy(passwordUnlockResult = result) }
             }
         }
     }
 
     fun clearPasswordResult() {
-        _uiState.value = _uiState.value.copy(passwordUnlockResult = null)
+        _uiState.update { it.copy(passwordUnlockResult = null) }
     }
 }

@@ -35,9 +35,8 @@ import com.t7lab.focustime.ui.onboarding.OnboardingScreen
 import com.t7lab.focustime.ui.settings.SettingsScreen
 import com.t7lab.focustime.ui.theme.FocusTimeTheme
 import com.t7lab.focustime.ui.urlmanager.UrlManagerScreen
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,7 +53,6 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission()
     ) { /* Notification permission result handled */ }
 
-    private val activityScope = CoroutineScope(Dispatchers.Main)
     private var onboardingComplete by mutableStateOf<Boolean?>(null)
 
     companion object {
@@ -66,7 +64,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         // Load onboarding status asynchronously
-        activityScope.launch {
+        lifecycleScope.launch {
             onboardingComplete = preferencesManager.isOnboardingComplete()
         }
 
@@ -115,7 +113,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             OnboardingScreen(
                                 onComplete = {
-                                    activityScope.launch {
+                                    lifecycleScope.launch {
                                         preferencesManager.completeOnboarding()
                                         onboardingComplete = true
                                         navController.navigate(Routes.HOME) {
