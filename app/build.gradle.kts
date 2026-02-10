@@ -18,6 +18,10 @@ android {
         versionName = "1.0"
     }
 
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -74,4 +78,7 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+
+    // Accompanist
+    implementation(libs.accompanist.drawablepainter)
 }

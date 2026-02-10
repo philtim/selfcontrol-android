@@ -38,4 +38,7 @@ interface BlockedItemDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM blocked_items WHERE type = :type AND value = :value)")
     suspend fun exists(type: BlockedItemType, value: String): Boolean
+
+    @Query("SELECT * FROM blocked_items")
+    suspend fun getAllItemsSuspend(): List<BlockedItem>
 }

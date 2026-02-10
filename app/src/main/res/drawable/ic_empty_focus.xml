@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <!-- Background circle - soft, inviting -->
+    <path
+        android:fillColor="#1A4CAF50"
+        android:pathData="M60,10 A50,50 0 1,1 60,110 A50,50 0 1,1 60,10" />
+
+    <!-- Shield base - protection metaphor -->
+    <path
+        android:fillColor="#FF4CAF50"
+        android:pathData="M60,22 L35,34 L35,58 C35,74 45,88 60,94 C75,88 85,74 85,58 L85,34 L60,22z" />
+
+    <!-- Inner shield highlight -->
+    <path
+        android:fillColor="#FF81C784"
+        android:pathData="M60,28 L42,37 L42,56 C42,69 50,80 60,85 L60,28z" />
+
+    <!-- Checkmark inside shield - success/ready -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M52,55 L57,62 L70,46"
+        android:strokeWidth="4"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Decorative sparkle top-right -->
+    <path
+        android:fillColor="#FFFFB300"
+        android:pathData="M88,30 L90,26 L92,30 L96,32 L92,34 L90,38 L88,34 L84,32z" />
+
+    <!-- Decorative sparkle bottom-left -->
+    <path
+        android:fillColor="#FFFFB300"
+        android:pathData="M28,70 L30,66 L32,70 L36,72 L32,74 L30,78 L28,74 L24,72z" />
+
+    <!-- Small dot decorations -->
+    <path
+        android:fillColor="#FF4CAF50"
+        android:pathData="M25,45 A3,3 0 1,1 25,51 A3,3 0 1,1 25,45" />
+    <path
+        android:fillColor="#FF81C784"
+        android:pathData="M95,55 A2,2 0 1,1 95,59 A2,2 0 1,1 95,55" />
+</vector>

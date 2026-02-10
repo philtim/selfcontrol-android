@@ -1,5 +1,6 @@
 package com.t7lab.focustime.ui.apppicker
 
+import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -8,15 +9,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -26,7 +25,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -41,9 +40,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.produceState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -108,11 +110,11 @@ fun AppPickerScreen(
                 )
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    // Curated distractions section
-                    if (uiState.searchQuery.isBlank() && uiState.curatedApps.isNotEmpty()) {
-                        item(key = "curated_header") {
+                    // Frequently used apps section (shown first for fast loading)
+                    if (uiState.searchQuery.isBlank() && uiState.frequentlyUsedApps.isNotEmpty()) {
+                        item(key = "frequent_header") {
                             Text(
-                                text = "Common Distractions",
+                                text = "Frequently Used",
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -120,12 +122,11 @@ fun AppPickerScreen(
                         }
 
                         items(
-                            items = uiState.curatedApps,
-                            key = { "curated_${it.packageName}" }
+                            items = uiState.frequentlyUsedApps,
+                            key = { "frequent_${it.packageName}" }
                         ) { app ->
                             AppListItem(
                                 app = app,
-                                isCurated = true,
                                 onToggle = {
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     viewModel.toggleApp(app.packageName)
@@ -152,7 +153,6 @@ fun AppPickerScreen(
                     ) { app ->
                         AppListItem(
                             app = app,
-                            isCurated = false,
                             onToggle = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 viewModel.toggleApp(app.packageName)
@@ -169,30 +169,30 @@ fun AppPickerScreen(
 @Composable
 private fun AppListItem(
     app: AppInfo,
-    isCurated: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val appIcon by produceState<Drawable?>(initialValue = null, key1 = app.packageName) {
+        value = withContext(Dispatchers.IO) {
+            try {
+                context.packageManager.getApplicationIcon(app.packageName)
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
     ListItem(
         headlineContent = { Text(app.displayName) },
-        supportingContent = {
-            Text(
-                text = app.packageName,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
         leadingContent = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (isCurated) {
-                    Icon(
-                        Icons.Default.Star,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                }
+            if (appIcon != null) {
+                Image(
+                    painter = rememberDrawablePainter(drawable = appIcon),
+                    contentDescription = "${app.displayName} icon",
+                    modifier = Modifier.size(40.dp)
+                )
+            } else {
                 Icon(
                     Icons.Default.Android,
                     contentDescription = null,

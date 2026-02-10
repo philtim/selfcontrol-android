@@ -61,6 +61,6 @@ class BlocklistRepository @Inject constructor(
     suspend fun getItemCount(): Int = blockedItemDao.getCount()
 
     suspend fun getAllItemsList(): List<BlockedItem> {
-        return blockedItemDao.getBlockedApps() + blockedItemDao.getBlockedUrls()
+        return blockedItemDao.getAllItemsSuspend()
     }
 }
