@@ -97,6 +97,7 @@ fun HomeScreen(
 
     var showPasswordDialog by remember { mutableStateOf(false) }
     var showDurationSheet by remember { mutableStateOf(false) }
+    var showVpnDisclosure by remember { mutableStateOf(false) }
 
     // Session completion celebration overlay
     if (uiState.showSessionComplete) {
@@ -149,10 +150,25 @@ fun HomeScreen(
             onStartFocus = { duration ->
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 viewModel.selectDuration(duration)
-                viewModel.startSession(onVpnPermissionNeeded)
+                viewModel.startSession(
+                    onVpnPermissionNeeded = { showVpnDisclosure = true }
+                )
                 showDurationSheet = false
             },
             onDismiss = { showDurationSheet = false }
+        )
+    }
+
+    // VPN prominent disclosure dialog (required by Play policy before system VPN dialog)
+    if (showVpnDisclosure) {
+        VpnDisclosureDialog(
+            onAccept = {
+                showVpnDisclosure = false
+                onVpnPermissionNeeded()
+            },
+            onDecline = {
+                showVpnDisclosure = false
+            }
         )
     }
 
@@ -485,6 +501,33 @@ private fun StartFocusButton(
             }
         }
     }
+}
+
+@Composable
+private fun VpnDisclosureDialog(
+    onAccept: () -> Unit,
+    onDecline: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDecline,
+        title = { Text(stringResource(R.string.vpn_disclosure_title)) },
+        text = {
+            Text(
+                text = stringResource(R.string.vpn_disclosure_message),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        confirmButton = {
+            Button(onClick = onAccept) {
+                Text(stringResource(R.string.vpn_disclosure_accept))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDecline) {
+                Text(stringResource(R.string.vpn_disclosure_decline))
+            }
+        }
+    )
 }
 
 @Composable

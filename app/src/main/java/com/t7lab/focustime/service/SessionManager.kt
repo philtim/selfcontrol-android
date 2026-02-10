@@ -1,7 +1,5 @@
 package com.t7lab.focustime.service
 
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.VpnService
@@ -57,12 +55,6 @@ class SessionManager @Inject constructor(
 
     fun getVpnPermissionIntent(): Intent? {
         return VpnService.prepare(context)
-    }
-
-    fun isDeviceAdminEnabled(): Boolean {
-        val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-        val componentName = ComponentName(context, FocusDeviceAdminReceiver::class.java)
-        return dpm.isAdminActive(componentName)
     }
 
     sealed class StartSessionResult {

@@ -41,7 +41,6 @@ class FocusVpnService : VpnService() {
         private const val DNS_READ_DELAY_MS = 10L
         private const val DNS_ERROR_DELAY_MS = 100L
         private const val TIMER_UPDATE_INTERVAL_MS = 1000L
-        private const val VPN_RECONNECT_DELAY_MS = 1000L
 
         fun createStartIntent(context: Context): Intent {
             return Intent(context, FocusVpnService::class.java).apply {
@@ -426,19 +425,11 @@ class FocusVpnService : VpnService() {
     }
 
     override fun onRevoke() {
-        serviceScope.launch {
-            val entryPoint = EntryPointAccessors.fromApplication(
-                applicationContext, ServiceEntryPoint::class.java
-            )
-            if (entryPoint.preferencesManager().isSessionActiveOnce()) {
-                delay(VPN_RECONNECT_DELAY_MS)
-                try {
-                    startVpn()
-                } catch (e: Exception) {
-                    Log.e(TAG, "Failed to reconnect VPN after revoke: ${e.message}", e)
-                }
-            }
-        }
+        // Respect the user's decision to revoke the VPN — do not auto-reconnect.
+        // The app monitor service continues to block apps independently.
+        Log.d(TAG, "VPN revoked by user, stopping VPN service")
+        stopVpn()
+        stopSelf()
     }
 
     override fun onDestroy() {

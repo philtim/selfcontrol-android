@@ -12,7 +12,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import java.security.MessageDigest
+import java.security.SecureRandom
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,8 +26,15 @@ class PreferencesManager @Inject constructor(
 ) {
     private val dataStore = context.dataStore
 
+    companion object {
+        private const val PBKDF2_ITERATIONS = 120_000
+        private const val KEY_LENGTH_BITS = 256
+        private const val SALT_BYTES = 16
+    }
+
     private object Keys {
         val MASTER_PASSWORD_HASH = stringPreferencesKey("master_password_hash")
+        val MASTER_PASSWORD_SALT = stringPreferencesKey("master_password_salt")
         val SESSION_ACTIVE = booleanPreferencesKey("session_active")
         val SESSION_END_TIME = longPreferencesKey("session_end_time")
         val SESSION_ID = longPreferencesKey("session_id")
@@ -106,20 +115,41 @@ class PreferencesManager @Inject constructor(
     }
 
     suspend fun setPassword(password: String) {
+        val salt = generateSalt()
+        val hash = hashPassword(password, salt)
         dataStore.edit { prefs ->
-            prefs[Keys.MASTER_PASSWORD_HASH] = hashPassword(password)
+            prefs[Keys.MASTER_PASSWORD_SALT] = salt.toHex()
+            prefs[Keys.MASTER_PASSWORD_HASH] = hash
         }
     }
 
     suspend fun removePassword() {
         dataStore.edit { prefs ->
             prefs.remove(Keys.MASTER_PASSWORD_HASH)
+            prefs.remove(Keys.MASTER_PASSWORD_SALT)
         }
     }
 
     suspend fun verifyPassword(password: String): Boolean {
-        val storedHash = dataStore.data.first()[Keys.MASTER_PASSWORD_HASH] ?: return false
-        return hashPassword(password) == storedHash
+        val prefs = dataStore.data.first()
+        val storedHash = prefs[Keys.MASTER_PASSWORD_HASH] ?: return false
+        val storedSaltHex = prefs[Keys.MASTER_PASSWORD_SALT]
+
+        return if (storedSaltHex != null) {
+            // PBKDF2 path (new)
+            val salt = storedSaltHex.hexToBytes()
+            hashPassword(password, salt) == storedHash
+        } else {
+            // Legacy SHA-256 path — verify then migrate
+            val legacyHash = legacyHashPassword(password)
+            if (legacyHash == storedHash) {
+                // Migrate to PBKDF2 on successful verify
+                setPassword(password)
+                true
+            } else {
+                false
+            }
+        }
     }
 
     suspend fun hasPasswordSet(): Boolean {
@@ -142,10 +172,29 @@ class PreferencesManager @Inject constructor(
         }
     }
 
-    private fun hashPassword(password: String): String {
-        val digest = MessageDigest.getInstance("SHA-256")
+    private fun hashPassword(password: String, salt: ByteArray): String {
+        val spec = PBEKeySpec(password.toCharArray(), salt, PBKDF2_ITERATIONS, KEY_LENGTH_BITS)
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+        val hash = factory.generateSecret(spec).encoded
+        return hash.toHex()
+    }
+
+    /** Legacy SHA-256 hash for migration of existing passwords. */
+    private fun legacyHashPassword(password: String): String {
+        val digest = java.security.MessageDigest.getInstance("SHA-256")
         val salt = "FocusTime_v1_salt"
         val bytes = digest.digest("$salt$password".toByteArray())
         return bytes.joinToString("") { "%02x".format(it) }
     }
+
+    private fun generateSalt(): ByteArray {
+        val salt = ByteArray(SALT_BYTES)
+        SecureRandom().nextBytes(salt)
+        return salt
+    }
+
+    private fun ByteArray.toHex(): String = joinToString("") { "%02x".format(it) }
+
+    private fun String.hexToBytes(): ByteArray =
+        chunked(2).map { it.toInt(16).toByte() }.toByteArray()
 }

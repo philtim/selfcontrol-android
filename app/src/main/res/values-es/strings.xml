@@ -111,6 +111,9 @@
     <string name="about">Acerca de</string>
     <string name="version_format">Versi\u00f3n %1$s</string>
     <string name="made_by">Hecho por T7Lab</string>
+    <string name="privacy_policy">Pol\u00edtica de Privacidad</string>
+    <string name="privacy_policy_url">https://t7lab.com/focustime/privacy</string>
+    <string name="privacy_policy_summary">FocusTime almacena todos los datos localmente en tu dispositivo. No se recopilan, transmiten ni comparten datos personales con terceros.</string>
 
     <!-- Blocked overlay -->
     <string name="focus_mode_active">Est\u00e1s en Modo Enfoque</string>
@@ -158,8 +161,13 @@
     <string name="vpn_permission_needed">Se necesita permiso de VPN para bloquear URLs.</string>
     <string name="notification_permission_needed">Se necesita permiso de notificaciones para mostrar el estado de la sesi\u00f3n de enfoque.</string>
     <string name="overlay_permission_needed">Se necesita permiso de superposici\u00f3n para bloquear apps.</string>
-    <string name="device_admin_needed">Se necesita administrador de dispositivo para evitar la desinstalaci\u00f3n durante las sesiones.</string>
     <string name="grant_permission">Conceder Permiso</string>
+
+    <!-- VPN Disclosure -->
+    <string name="vpn_disclosure_title">Conexi\u00f3n VPN Requerida</string>
+    <string name="vpn_disclosure_message">Para bloquear sitios web que distraen, FocusTime crea una conexi\u00f3n VPN local en tu dispositivo. Esta VPN:\n\n\u2022 Solo intercepta solicitudes DNS para bloquear los sitios web que seleccionaste\n\u2022 Se ejecuta completamente en tu dispositivo \u2014 no se env\u00edan datos a servidores externos\n\u2022 No monitorea, registra ni transmite tu actividad de navegaci\u00f3n\n\u2022 Solo est\u00e1 activa durante tu sesi\u00f3n de enfoque\n\nSe te pedir\u00e1 que apruebes la conexi\u00f3n VPN a continuaci\u00f3n.</string>
+    <string name="vpn_disclosure_accept">Entiendo, Continuar</string>
+    <string name="vpn_disclosure_decline">Cancelar</string>
 
     <!-- Notification -->
     <string name="focus_channel_name">Sesi\u00f3n de Enfoque</string>
@@ -167,9 +175,6 @@
     <string name="notification_title">FocusTime Activo</string>
     <string name="notification_text">%1$s restante</string>
     <string name="notification_monitoring_apps">Monitoreando apps bloqueadas</string>
-
-    <!-- Device Admin -->
-    <string name="device_admin_description">FocusTime usa el administrador de dispositivo para evitar la desinstalaci\u00f3n durante sesiones de enfoque activas.</string>
 
     <!-- Motivational Quotes -->
     <string-array name="motivational_quote_texts">
