@@ -41,7 +41,7 @@
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:taskAffinity=""
-            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+            android:theme="@style/Theme.FocusTime.BlockedOverlay" />
 
         <!-- VPN Service for URL blocking -->
         <service

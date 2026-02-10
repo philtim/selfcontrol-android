@@ -2,4 +2,9 @@
 <resources>
     <!-- Base theme is only used as a splash/fallback; Compose handles theming -->
     <style name="Theme.FocusTime" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.FocusTime.BlockedOverlay" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 </resources>

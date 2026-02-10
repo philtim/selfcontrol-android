@@ -2,6 +2,7 @@ package com.t7lab.focustime.ui
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -45,8 +46,8 @@ import com.t7lab.focustime.data.db.SessionDao
 import com.t7lab.focustime.data.preferences.PreferencesManager
 import com.t7lab.focustime.service.SessionManager
 import com.t7lab.focustime.ui.components.FocusTimerRing
-import com.t7lab.focustime.ui.theme.DarkSessionColors
 import com.t7lab.focustime.ui.theme.FocusTimeTheme
+import com.t7lab.focustime.ui.theme.LightSessionColors
 import com.t7lab.focustime.ui.theme.LocalSessionColors
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -84,19 +85,27 @@ class BlockedOverlayActivity : ComponentActivity() {
             }
         }
 
+        val hasWindowBlur = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
         setContent {
             FocusTimeTheme(isSessionActive = true) {
-                CompositionLocalProvider(LocalSessionColors provides DarkSessionColors) {
+                CompositionLocalProvider(LocalSessionColors provides LightSessionColors) {
                     BlockedScreen(
                         preferencesManager = preferencesManager,
                         sessionManager = sessionManager,
                         sessionDao = sessionDao,
                         blockedAppName = blockedAppName,
+                        hasWindowBlur = hasWindowBlur,
                         onGoBack = { goHome() },
                         onUnlocked = { finish() }
                     )
                 }
             }
+        }
+
+        // Enable real window blur on API 31+ (must be after setContent so DecorView exists)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            window.setBackgroundBlurRadius(30)
         }
     }
 
@@ -117,6 +126,7 @@ private fun BlockedScreen(
     sessionManager: SessionManager,
     sessionDao: SessionDao,
     blockedAppName: String?,
+    hasWindowBlur: Boolean,
     onGoBack: () -> Unit,
     onUnlocked: () -> Unit
 ) {
@@ -127,8 +137,14 @@ private fun BlockedScreen(
     var showPasswordField by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf<String?>(null) }
     var hasPassword by remember { mutableStateOf(false) }
-    var unlockDelayComplete by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    // Light green scrim — translucent with blur, nearly opaque without
+    val scrimColor = if (hasWindowBlur) {
+        Color(0xFFF0F7F1).copy(alpha = 0.80f)
+    } else {
+        Color(0xFFF0F7F1).copy(alpha = 0.97f)
+    }
 
     LaunchedEffect(Unit) {
         hasPassword = preferencesManager.hasPasswordSet()
@@ -155,27 +171,17 @@ private fun BlockedScreen(
         }
     }
 
-    // 5-second delay before showing password field
-    LaunchedEffect(showPasswordField) {
-        if (showPasswordField) {
-            unlockDelayComplete = false
-            delay(5000)
-            unlockDelayComplete = true
-        }
-    }
-
-    // Dark scrim background
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        // Scrim
+        // Light frosted scrim
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
-                drawRect(Color.Black.copy(alpha = 0.85f))
+                drawRect(scrimColor)
             }
         }
 
@@ -194,7 +200,7 @@ private fun BlockedScreen(
                     "This app is blocked"
                 },
                 style = MaterialTheme.typography.headlineSmall,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center
             )
 
@@ -216,14 +222,14 @@ private fun BlockedScreen(
                 onClick = onGoBack,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White.copy(alpha = 0.15f),
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
                 Text("Return Home")
             }
 
-            // Emergency override — subtle, delayed
+            // Emergency override — subtle, immediate
             if (hasPassword) {
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -234,7 +240,7 @@ private fun BlockedScreen(
                         Text(
                             text = "Emergency override",
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.4f)
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                         )
                     }
                 }
@@ -248,48 +254,37 @@ private fun BlockedScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (!unlockDelayComplete) {
-                            Text(
-                                text = "Please wait...",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.5f)
-                            )
-                        } else {
-                            OutlinedTextField(
-                                value = password,
-                                onValueChange = {
-                                    password = it
-                                    passwordError = null
-                                },
-                                label = { Text("Master Password") },
-                                visualTransformation = PasswordVisualTransformation(),
-                                isError = passwordError != null,
-                                supportingText = passwordError?.let { err -> { Text(err) } },
-                                singleLine = true,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                        OutlinedTextField(
+                            value = password,
+                            onValueChange = {
+                                password = it
+                                passwordError = null
+                            },
+                            label = { Text("Master Password") },
+                            visualTransformation = PasswordVisualTransformation(),
+                            isError = passwordError != null,
+                            supportingText = passwordError?.let { err -> { Text(err) } },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                            OutlinedButton(
-                                onClick = {
-                                    scope.launch {
-                                        if (preferencesManager.verifyPassword(password)) {
-                                            sessionManager.endSession()
-                                            onUnlocked()
-                                        } else {
-                                            passwordError = "Incorrect password"
-                                        }
+                        OutlinedButton(
+                            onClick = {
+                                scope.launch {
+                                    if (preferencesManager.verifyPassword(password)) {
+                                        sessionManager.endSession()
+                                        onUnlocked()
+                                    } else {
+                                        passwordError = "Incorrect password"
                                     }
-                                },
-                                enabled = password.isNotEmpty(),
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = Color.White.copy(alpha = 0.7f)
-                                )
-                            ) {
-                                Text("Unlock")
-                            }
+                                }
+                            },
+                            enabled = password.isNotEmpty(),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Unlock")
                         }
                     }
                 }
