@@ -1,11 +1,19 @@
 package com.t7lab.focustime.ui.home
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,36 +23,35 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.ui.res.painterResource
-import com.t7lab.focustime.R
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,20 +60,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.t7lab.focustime.R
 import com.t7lab.focustime.data.db.BlockedItem
 import com.t7lab.focustime.data.db.BlockedItemType
 import com.t7lab.focustime.ui.components.BlocklistCard
 import com.t7lab.focustime.ui.components.DurationBottomSheet
+import com.t7lab.focustime.ui.components.FocusTimerRing
 import com.t7lab.focustime.ui.components.RotatingQuoteCard
 import com.t7lab.focustime.ui.components.SessionCompleteOverlay
-import com.t7lab.focustime.ui.theme.TimerTypography
-import com.t7lab.focustime.util.formatDuration
+import com.t7lab.focustime.ui.theme.FocusTimeTheme
+import com.t7lab.focustime.ui.theme.LocalSessionColors
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -78,7 +92,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val haptic = LocalHapticFeedback.current
 
     var showPasswordDialog by remember { mutableStateOf(false) }
@@ -93,69 +106,37 @@ fun HomeScreen(
         return
     }
 
-    Scaffold(
-        topBar = {
-            LargeTopAppBar(
-                title = {
-                    Text(if (uiState.isSessionActive) "Focus Active" else "FocusTime")
-                },
-                actions = {
-                    if (!uiState.isSessionActive) {
-                        IconButton(onClick = onNavigateToSettings) {
-                            Icon(Icons.Default.Settings, contentDescription = "Settings")
-                        }
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
+    AnimatedContent(
+        targetState = uiState.isSessionActive,
+        transitionSpec = {
+            (fadeIn(tween(800)) + scaleIn(
+                initialScale = 0.95f,
+                animationSpec = tween(800)
+            )) togetherWith (fadeOut(tween(400)) + scaleOut(
+                targetScale = 1.05f,
+                animationSpec = tween(400)
+            ))
         },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) { padding ->
-        val scrollState = rememberScrollState()
-        val isReady = uiState.blockedItems.isNotEmpty()
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            // Scrollable content area
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(scrollState)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                if (uiState.isSessionActive) {
-                    ActiveSessionContent(
-                        remainingTimeMs = uiState.remainingTimeMs,
-                        endTime = uiState.activeSession?.endTime ?: 0L,
-                        durationMs = uiState.activeSession?.durationMs ?: 1L,
-                        blockedItems = uiState.blockedItems,
-                        onUnlockClick = { showPasswordDialog = true }
-                    )
-                } else {
-                    NewSessionContent(
-                        blockedItems = uiState.blockedItems,
-                        onAddApps = onNavigateToAppPicker,
-                        onAddUrls = onNavigateToUrlManager,
-                        onRemoveItem = viewModel::removeItem
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            // Fixed bottom button (only shown when not in active session)
-            if (!uiState.isSessionActive) {
-                StartFocusButton(
-                    itemCount = uiState.blockedItems.size,
-                    isReady = isReady,
-                    onStartFocus = { showDurationSheet = true },
-                    modifier = Modifier.padding(16.dp)
+        label = "session_transition"
+    ) { isActive ->
+        if (isActive) {
+            FocusTimeTheme(isSessionActive = true) {
+                ActiveSessionScreen(
+                    remainingTimeMs = uiState.remainingTimeMs,
+                    endTime = uiState.activeSession?.endTime ?: 0L,
+                    durationMs = uiState.activeSession?.durationMs ?: 1L,
+                    onUnlockClick = { showPasswordDialog = true }
                 )
             }
+        } else {
+            SetupScreen(
+                uiState = uiState,
+                onNavigateToAppPicker = onNavigateToAppPicker,
+                onNavigateToUrlManager = onNavigateToUrlManager,
+                onNavigateToSettings = onNavigateToSettings,
+                onStartFocus = { showDurationSheet = true },
+                onRemoveItem = viewModel::removeItem
+            )
         }
     }
 
@@ -188,105 +169,247 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ActiveSessionContent(
+private fun ActiveSessionScreen(
     remainingTimeMs: Long,
     endTime: Long,
     durationMs: Long,
-    blockedItems: List<BlockedItem>,
     onUnlockClick: () -> Unit
 ) {
-    val progress = if (durationMs > 0) {
-        ((endTime - System.currentTimeMillis()).toFloat() / durationMs).coerceIn(0f, 1f)
-    } else 0f
+    val sessionColors = LocalSessionColors.current
+    val haptic = LocalHapticFeedback.current
 
-    val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        label = "progress"
+    // Ambient glow animation
+    val infiniteTransition = rememberInfiniteTransition(label = "ambient")
+    val glowRadius by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 0.6f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(6000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glow_radius"
     )
 
-    val appCount = blockedItems.count { it.type == BlockedItemType.APP }
-    val urlCount = blockedItems.count { it.type == BlockedItemType.URL }
+    // Haptic tick at minute boundaries
+    var lastMinute by remember { mutableStateOf(-1L) }
+    val currentMinute = remainingTimeMs / 60_000
+    LaunchedEffect(currentMinute) {
+        if (lastMinute >= 0 && currentMinute != lastMinute) {
+            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        }
+        lastMinute = currentMinute
+    }
 
-    // Immersive timer card
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    // Unlock trigger state
+    var showUnlockSheet by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
+        // Ambient radial gradient glow
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val center = Offset(size.width / 2, size.height * 0.42f)
+            val radius = size.width * glowRadius
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        sessionColors.ambientGlow.copy(alpha = 0.3f),
+                        sessionColors.ambientGlow.copy(alpha = 0.08f),
+                        Color.Transparent
+                    ),
+                    center = center,
+                    radius = radius
+                ),
+                center = center,
+                radius = radius
+            )
+        }
+
+        // Main content centered
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
+            // Shield icon
             Icon(
                 painter = painterResource(R.drawable.ic_focus_shield),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(36.dp)
+                tint = sessionColors.timerRingFill.copy(alpha = 0.6f),
+                modifier = Modifier.size(32.dp)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Box(contentAlignment = Alignment.Center) {
-                // Progress shows elapsed time (fills up as time passes)
-                CircularProgressIndicator(
-                    progress = { 1f - animatedProgress },
-                    modifier = Modifier.size(200.dp),
-                    strokeWidth = 10.dp,
-                    trackColor = MaterialTheme.colorScheme.primary,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+            // Timer ring — the hero element
+            FocusTimerRing(
+                remainingTimeMs = remainingTimeMs,
+                endTimeMs = endTime,
+                durationMs = durationMs,
+            )
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            // Motivational quote (no card wrapper)
+            RotatingQuoteCard(
+                modifier = Modifier.padding(horizontal = 32.dp)
+            )
+        }
+
+        // Nearly invisible unlock trigger at the bottom
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { showUnlockSheet = true }
                 )
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = formatDuration(remainingTimeMs),
-                        style = TimerTypography,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                    Text(
-                        text = "remaining",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            val summary = buildString {
-                if (appCount > 0) append("$appCount app${if (appCount > 1) "s" else ""}")
-                if (appCount > 0 && urlCount > 0) append(", ")
-                if (urlCount > 0) append("$urlCount URL${if (urlCount > 1) "s" else ""}")
-                append(" blocked")
-            }
-            Text(
-                text = summary,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                Icons.Default.Lock,
+                contentDescription = "Emergency unlock",
+                modifier = Modifier.size(12.dp),
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
             )
         }
     }
 
-    // Motivational quote
-    RotatingQuoteCard()
-
-    // Unlock button — subtle, pushed down
-    Spacer(modifier = Modifier.height(16.dp))
-    TextButton(
-        onClick = onUnlockClick,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Icon(
-            Icons.Default.LockOpen,
-            contentDescription = null,
-            modifier = Modifier.size(ButtonDefaults.IconSize)
+    // Unlock confirmation bottom sheet
+    if (showUnlockSheet) {
+        UnlockConfirmationSheet(
+            onConfirm = {
+                showUnlockSheet = false
+                onUnlockClick()
+            },
+            onDismiss = { showUnlockSheet = false }
         )
-        Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-        Text("Unlock with password")
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun UnlockConfirmationSheet(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Break focus session?",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Breaking focus early reduces effectiveness. Are you sure you want to unlock?",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Keep focusing")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(
+                onClick = onConfirm,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "Emergency override",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SetupScreen(
+    uiState: HomeUiState,
+    onNavigateToAppPicker: () -> Unit,
+    onNavigateToUrlManager: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onStartFocus: () -> Unit,
+    onRemoveItem: (BlockedItem) -> Unit
+) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val isReady = uiState.blockedItems.isNotEmpty()
+
+    Scaffold(
+        topBar = {
+            LargeTopAppBar(
+                title = { Text("FocusTime") },
+                actions = {
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    }
+                },
+                scrollBehavior = scrollBehavior
+            )
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { padding ->
+        val scrollState = rememberScrollState()
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                NewSessionContent(
+                    blockedItems = uiState.blockedItems,
+                    onAddApps = onNavigateToAppPicker,
+                    onAddUrls = onNavigateToUrlManager,
+                    onRemoveItem = onRemoveItem
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            StartFocusButton(
+                itemCount = uiState.blockedItems.size,
+                isReady = isReady,
+                onStartFocus = onStartFocus,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
     }
 }
 
@@ -301,7 +424,6 @@ private fun NewSessionContent(
     val apps = blockedItems.filter { it.type == BlockedItemType.APP }
     val urls = blockedItems.filter { it.type == BlockedItemType.URL }
 
-    // Unified blocklist card (Apps + URLs in tabs)
     BlocklistCard(
         apps = apps,
         urls = urls,
@@ -374,8 +496,7 @@ private fun PasswordUnlockDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        icon = { Icon(Icons.Default.LockOpen, contentDescription = null) },
-        title = { Text("Unlock Session") },
+        title = { Text("Emergency Override") },
         text = {
             Column {
                 Text(

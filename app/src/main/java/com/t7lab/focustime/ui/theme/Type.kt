@@ -2,14 +2,18 @@ package com.t7lab.focustime.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.t7lab.focustime.R
 
-// Using default system fonts until custom fonts are properly added
 val DmSansFamily = FontFamily.SansSerif
 
-val JetBrainsMonoFamily = FontFamily.Monospace
+val JetBrainsMonoFamily = FontFamily(
+    Font(R.font.jetbrains_mono_regular, FontWeight.Normal),
+    Font(R.font.jetbrains_mono_bold, FontWeight.Bold),
+)
 
 val FocusTimeTypography = Typography(
     displayLarge = TextStyle(
@@ -116,6 +120,6 @@ val FocusTimeTypography = Typography(
 val TimerTypography = TextStyle(
     fontFamily = JetBrainsMonoFamily,
     fontWeight = FontWeight.Bold,
-    fontSize = 48.sp,
-    lineHeight = 56.sp,
+    fontSize = 56.sp,
+    lineHeight = 64.sp,
 )
