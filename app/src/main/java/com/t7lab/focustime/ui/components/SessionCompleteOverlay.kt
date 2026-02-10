@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -231,7 +232,7 @@ fun SessionCompleteOverlay(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
-                        text = "Well Done!",
+                        text = stringResource(R.string.well_done),
                         style = MaterialTheme.typography.displaySmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
@@ -240,7 +241,7 @@ fun SessionCompleteOverlay(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "You stayed focused for",
+                        text = stringResource(R.string.you_stayed_focused_for),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -255,7 +256,7 @@ fun SessionCompleteOverlay(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Your apps and URLs are now unblocked.\nKeep up the great work!",
+                        text = stringResource(R.string.session_complete_message),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center

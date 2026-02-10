@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.t7lab.focustime.ui.theme.LocalSessionColors
 import com.t7lab.focustime.ui.theme.TimerTypography
+import androidx.compose.ui.platform.LocalContext
 import com.t7lab.focustime.util.formatDuration
 import com.t7lab.focustime.util.formatEndTime
 
@@ -37,6 +38,7 @@ fun FocusTimerRing(
     showEndTime: Boolean = true,
 ) {
     val sessionColors = LocalSessionColors.current
+    val context = LocalContext.current
 
     val progress = if (durationMs > 0) {
         1f - ((endTimeMs - System.currentTimeMillis()).toFloat() / durationMs).coerceIn(0f, 1f)
@@ -99,7 +101,7 @@ fun FocusTimerRing(
             )
             if (showEndTime && endTimeMs > 0) {
                 Text(
-                    text = formatEndTime(endTimeMs),
+                    text = formatEndTime(endTimeMs, context),
                     style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
                     color = sessionColors.timerText.copy(alpha = 0.6f)
                 )

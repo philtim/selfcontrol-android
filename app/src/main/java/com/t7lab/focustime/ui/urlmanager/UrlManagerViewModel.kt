@@ -1,7 +1,9 @@
 package com.t7lab.focustime.ui.urlmanager
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.t7lab.focustime.R
 import com.t7lab.focustime.data.db.BlockedItem
 import com.t7lab.focustime.data.repository.BlocklistRepository
 import com.t7lab.focustime.util.isValidDomain
@@ -15,7 +17,7 @@ import javax.inject.Inject
 data class UrlManagerUiState(
     val urls: List<BlockedItem> = emptyList(),
     val inputText: String = "",
-    val errorMessage: String? = null
+    @StringRes val errorMessageRes: Int? = null
 )
 
 @HiltViewModel
@@ -35,7 +37,7 @@ class UrlManagerViewModel @Inject constructor(
     }
 
     fun updateInput(text: String) {
-        _uiState.value = _uiState.value.copy(inputText = text, errorMessage = null)
+        _uiState.value = _uiState.value.copy(inputText = text, errorMessageRes = null)
     }
 
     fun addUrl() {
@@ -52,14 +54,14 @@ class UrlManagerViewModel @Inject constructor(
 
         if (!isValidDomain(cleaned)) {
             _uiState.value = _uiState.value.copy(
-                errorMessage = "Invalid domain format. Use e.g. instagram.com or *.youtube.com"
+                errorMessageRes = R.string.invalid_domain_format
             )
             return
         }
 
         viewModelScope.launch {
             blocklistRepository.addUrl(cleaned)
-            _uiState.value = _uiState.value.copy(inputText = "", errorMessage = null)
+            _uiState.value = _uiState.value.copy(inputText = "", errorMessageRes = null)
         }
     }
 

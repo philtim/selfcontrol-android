@@ -13,6 +13,7 @@ import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.t7lab.focustime.data.db.BlockedItem
@@ -52,7 +53,7 @@ fun BlockedItemChip(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Remove",
+                        contentDescription = stringResource(R.string.remove),
                         modifier = Modifier.size(InputChipDefaults.IconSize)
                     )
                 }

@@ -39,9 +39,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.t7lab.focustime.R
 import com.t7lab.focustime.data.db.SessionDao
 import com.t7lab.focustime.data.preferences.PreferencesManager
 import com.t7lab.focustime.service.SessionManager
@@ -135,7 +137,7 @@ private fun BlockedScreen(
     var totalDurationMs by remember { mutableLongStateOf(0L) }
     var password by remember { mutableStateOf("") }
     var showPasswordField by remember { mutableStateOf(false) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf(false) }
     var hasPassword by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -195,9 +197,9 @@ private fun BlockedScreen(
             // (1) "[AppName] is blocked"
             Text(
                 text = if (blockedAppName != null) {
-                    "$blockedAppName is blocked"
+                    stringResource(R.string.app_blocked_named, blockedAppName)
                 } else {
-                    "This app is blocked"
+                    stringResource(R.string.app_blocked_generic)
                 },
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -226,7 +228,7 @@ private fun BlockedScreen(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text("Return Home")
+                Text(stringResource(R.string.return_home))
             }
 
             // Emergency override — subtle, immediate
@@ -238,7 +240,7 @@ private fun BlockedScreen(
                         onClick = { showPasswordField = true }
                     ) {
                         Text(
-                            text = "Emergency override",
+                            text = stringResource(R.string.emergency_override),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                         )
@@ -258,12 +260,14 @@ private fun BlockedScreen(
                             value = password,
                             onValueChange = {
                                 password = it
-                                passwordError = null
+                                passwordError = false
                             },
-                            label = { Text("Master Password") },
+                            label = { Text(stringResource(R.string.master_password)) },
                             visualTransformation = PasswordVisualTransformation(),
-                            isError = passwordError != null,
-                            supportingText = passwordError?.let { err -> { Text(err) } },
+                            isError = passwordError,
+                            supportingText = if (passwordError) {
+                                { Text(stringResource(R.string.incorrect_password)) }
+                            } else null,
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -277,14 +281,14 @@ private fun BlockedScreen(
                                         sessionManager.endSession()
                                         onUnlocked()
                                     } else {
-                                        passwordError = "Incorrect password"
+                                        passwordError = true
                                     }
                                 }
                             },
                             enabled = password.isNotEmpty(),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Unlock")
+                            Text(stringResource(R.string.unlock))
                         }
                     }
                 }

@@ -57,8 +57,10 @@ fun SettingsScreen(
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState.message) {
-        uiState.message?.let {
+    val messageRes = uiState.messageRes
+    val message = messageRes?.let { stringResource(it) }
+    LaunchedEffect(messageRes) {
+        message?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.clearMessage()
         }
@@ -67,10 +69,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -95,13 +97,12 @@ fun SettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Master Password",
+                        text = stringResource(R.string.master_password),
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Set a master password to allow unlocking focus sessions early. " +
-                                "Share it with someone you trust so you can't unlock it yourself.",
+                        text = stringResource(R.string.password_description),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -109,7 +110,7 @@ fun SettingsScreen(
 
                     if (uiState.isSessionActive) {
                         Text(
-                            text = "Password settings cannot be changed during an active focus session.",
+                            text = stringResource(R.string.password_session_active_warning),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -142,17 +143,17 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "FocusTime",
+                        text = stringResource(R.string.app_name),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                     Text(
-                        text = "Version 1.0",
+                        text = stringResource(R.string.version_format, "1.0"),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                     Text(
-                        text = "Made by T7Lab",
+                        text = stringResource(R.string.made_by),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
@@ -223,9 +224,9 @@ private fun PasswordTextField(
                         Icons.Default.Visibility
                     },
                     contentDescription = if (passwordVisible) {
-                        "Hide password"
+                        stringResource(R.string.hide_password)
                     } else {
-                        "Show password"
+                        stringResource(R.string.show_password)
                     }
                 )
             }
@@ -246,12 +247,12 @@ private fun SetPasswordForm(
         PasswordTextField(
             value = newPassword,
             onValueChange = { newPassword = it },
-            label = "New password"
+            label = stringResource(R.string.new_password)
         )
         PasswordTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = "Confirm password"
+            label = stringResource(R.string.confirm_password)
         )
         Button(
             onClick = {
@@ -262,7 +263,7 @@ private fun SetPasswordForm(
             enabled = newPassword.isNotEmpty() && confirmPassword.isNotEmpty(),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Set Password")
+            Text(stringResource(R.string.set_password))
         }
     }
 }
@@ -279,7 +280,7 @@ private fun ChangePasswordForm(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
-            text = "Password is set",
+            text = stringResource(R.string.password_is_set),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary
         )
@@ -287,17 +288,17 @@ private fun ChangePasswordForm(
         PasswordTextField(
             value = currentPassword,
             onValueChange = { currentPassword = it },
-            label = "Current password"
+            label = stringResource(R.string.current_password)
         )
         PasswordTextField(
             value = newPassword,
             onValueChange = { newPassword = it },
-            label = "New password"
+            label = stringResource(R.string.new_password)
         )
         PasswordTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = "Confirm new password"
+            label = stringResource(R.string.confirm_new_password)
         )
         Button(
             onClick = {
@@ -309,14 +310,14 @@ private fun ChangePasswordForm(
             enabled = currentPassword.isNotEmpty() && newPassword.isNotEmpty() && confirmPassword.isNotEmpty(),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Change Password")
+            Text(stringResource(R.string.change_password))
         }
 
         OutlinedButton(
             onClick = { showRemoveDialog = true },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Remove Password")
+            Text(stringResource(R.string.remove_password))
         }
     }
 
@@ -341,14 +342,14 @@ private fun RemovePasswordDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Remove Password") },
+        title = { Text(stringResource(R.string.remove_password)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Enter your current password to confirm removal.")
+                Text(stringResource(R.string.confirm_remove_password))
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Current password") },
+                    label = { Text(stringResource(R.string.current_password)) },
                     visualTransformation = if (passwordVisible) {
                         VisualTransformation.None
                     } else {
@@ -363,9 +364,9 @@ private fun RemovePasswordDialog(
                                     Icons.Default.Visibility
                                 },
                                 contentDescription = if (passwordVisible) {
-                                    "Hide password"
+                                    stringResource(R.string.hide_password)
                                 } else {
-                                    "Show password"
+                                    stringResource(R.string.show_password)
                                 }
                             )
                         }
@@ -380,12 +381,12 @@ private fun RemovePasswordDialog(
                 onClick = { onConfirm(password) },
                 enabled = password.isNotEmpty()
             ) {
-                Text("Confirm")
+                Text(stringResource(R.string.confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

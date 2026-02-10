@@ -33,7 +33,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.t7lab.focustime.R
 import com.t7lab.focustime.util.DURATION_OPTIONS
 import com.t7lab.focustime.util.formatDurationShort
 import java.util.concurrent.TimeUnit
@@ -49,6 +52,7 @@ fun DurationBottomSheet(
     val sheetState = rememberModalBottomSheetState()
     var selectedDuration by remember { mutableStateOf(lastSelectedDurationMs) }
     var showCustomDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -61,7 +65,7 @@ fun DurationBottomSheet(
                 .padding(bottom = 32.dp)
         ) {
             Text(
-                text = "How long?",
+                text = stringResource(R.string.how_long),
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -76,7 +80,7 @@ fun DurationBottomSheet(
                     FilterChip(
                         selected = selectedDuration == option.durationMs,
                         onClick = { selectedDuration = option.durationMs },
-                        label = { Text(option.label) }
+                        label = { Text(stringResource(option.labelRes)) }
                     )
                 }
 
@@ -89,9 +93,9 @@ fun DurationBottomSheet(
                     label = {
                         Text(
                             if (isCustomSelected) {
-                                formatCustomDuration(selectedDuration!!)
+                                formatCustomDuration(selectedDuration!!, context)
                             } else {
-                                "Custom"
+                                stringResource(R.string.custom)
                             }
                         )
                     }
@@ -116,12 +120,12 @@ fun DurationBottomSheet(
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
-                            text = "Start Focus",
+                            text = stringResource(R.string.start_focus),
                             style = MaterialTheme.typography.titleMedium
                         )
                         if (selectedDuration != null) {
                             Text(
-                                text = "$itemCount items \u2022 ${formatDurationShort(selectedDuration!!)}",
+                                text = stringResource(R.string.items_summary, itemCount, formatDurationShort(selectedDuration!!, context)),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = LocalContentColor.current.copy(alpha = 0.8f)
                             )
@@ -161,14 +165,14 @@ private fun CustomDurationDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Set Custom Duration") },
+        title = { Text(stringResource(R.string.set_custom_duration)) },
         text = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Hours : Minutes",
+                    text = stringResource(R.string.hours_minutes),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 16.dp)
@@ -180,23 +184,19 @@ private fun CustomDurationDialog(
             TextButton(
                 onClick = { onConfirm(timePickerState.hour, timePickerState.minute) }
             ) {
-                Text("Set")
+                Text(stringResource(R.string.set))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
 }
 
-private fun formatCustomDuration(ms: Long): String {
+private fun formatCustomDuration(ms: Long, context: android.content.Context): String {
     val hours = TimeUnit.MILLISECONDS.toHours(ms)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(ms) % 60
-    return when {
-        hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
-        hours > 0 -> "${hours}h"
-        else -> "${minutes}m"
-    }
+    return formatDurationShort(ms, context)
 }

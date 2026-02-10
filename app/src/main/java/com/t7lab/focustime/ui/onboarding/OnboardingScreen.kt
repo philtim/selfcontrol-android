@@ -1,5 +1,7 @@
 package com.t7lab.focustime.ui.onboarding
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -33,32 +35,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.t7lab.focustime.R
 
 private data class OnboardingPage(
-    val iconRes: Int,
-    val title: String,
-    val description: String,
+    @DrawableRes val iconRes: Int,
+    @StringRes val titleRes: Int,
+    @StringRes val descriptionRes: Int,
 )
 
 private val pages = listOf(
     OnboardingPage(
         iconRes = R.drawable.ic_focus_shield,
-        title = "Take Control of\nYour Focus",
-        description = "FocusTime blocks distracting apps and websites so you can stay focused on what matters most.",
+        titleRes = R.string.onboarding_title_1,
+        descriptionRes = R.string.onboarding_desc_1,
     ),
     OnboardingPage(
         iconRes = R.drawable.ic_app_block,
-        title = "Pick What\nTo Block",
-        description = "Choose from common distractions or add your own apps and websites. You decide what gets blocked.",
+        titleRes = R.string.onboarding_title_2,
+        descriptionRes = R.string.onboarding_desc_2,
     ),
     OnboardingPage(
         iconRes = R.drawable.ic_focus_timer,
-        title = "Set a Timer\nand Go",
-        description = "Pick a duration, hit start, and stay focused. FocusTime keeps you accountable until the timer ends.",
+        titleRes = R.string.onboarding_title_3,
+        descriptionRes = R.string.onboarding_desc_3,
     ),
 )
 
@@ -133,14 +136,14 @@ fun OnboardingScreen(
                     .height(56.dp)
             ) {
                 Text(
-                    text = if (currentPage < pages.size - 1) "Next" else "Get Started",
+                    text = if (currentPage < pages.size - 1) stringResource(R.string.next) else stringResource(R.string.get_started),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
 
             if (currentPage < pages.size - 1) {
                 TextButton(onClick = onComplete) {
-                    Text("Skip")
+                    Text(stringResource(R.string.skip))
                 }
             } else {
                 Spacer(modifier = Modifier.height(48.dp))
@@ -174,7 +177,7 @@ private fun OnboardingPageContent(page: OnboardingPage) {
         Spacer(modifier = Modifier.height(40.dp))
 
         Text(
-            text = page.title,
+            text = stringResource(page.titleRes),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -184,7 +187,7 @@ private fun OnboardingPageContent(page: OnboardingPage) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = page.description,
+            text = stringResource(page.descriptionRes),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

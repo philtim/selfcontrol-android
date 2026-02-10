@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.t7lab.focustime.R
@@ -58,7 +59,7 @@ fun BlocklistCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Block during focus",
+                text = stringResource(R.string.block_during_focus),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -82,7 +83,7 @@ fun BlocklistCard(
                         onClick = { selectedTab = 0 },
                         text = {
                             Text(
-                                if (apps.isNotEmpty()) "Apps (${apps.size})" else "Apps"
+                                if (apps.isNotEmpty()) stringResource(R.string.apps_tab_count, apps.size) else stringResource(R.string.apps_tab)
                             )
                         }
                     )
@@ -91,7 +92,7 @@ fun BlocklistCard(
                         onClick = { selectedTab = 1 },
                         text = {
                             Text(
-                                if (urls.isNotEmpty()) "URLs (${urls.size})" else "URLs"
+                                if (urls.isNotEmpty()) stringResource(R.string.urls_tab_count, urls.size) else stringResource(R.string.urls_tab)
                             )
                         }
                     )
@@ -128,7 +129,7 @@ fun BlocklistCard(
                         modifier = Modifier.size(ButtonDefaults.IconSize)
                     )
                     Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                    Text(if (selectedTab == 0) "Add Apps" else "Add URLs")
+                    Text(if (selectedTab == 0) stringResource(R.string.add_apps) else stringResource(R.string.add_urls))
                 }
             }
         }
@@ -155,7 +156,7 @@ private fun EmptyBlocklistContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Ready to focus?",
+            text = stringResource(R.string.ready_to_focus),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -163,7 +164,7 @@ private fun EmptyBlocklistContent(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "Add the apps and sites that distract you most",
+            text = stringResource(R.string.empty_blocklist_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -182,7 +183,7 @@ private fun EmptyBlocklistContent(
                 modifier = Modifier.size(ButtonDefaults.IconSize)
             )
             Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-            Text("Add distracting apps")
+            Text(stringResource(R.string.add_distracting_apps))
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -197,7 +198,7 @@ private fun EmptyBlocklistContent(
                 modifier = Modifier.size(ButtonDefaults.IconSize)
             )
             Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-            Text("Add distracting sites")
+            Text(stringResource(R.string.add_distracting_sites))
         }
     }
 }
