@@ -10,21 +10,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.PlayArrow
@@ -38,9 +34,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -65,8 +61,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.t7lab.focustime.data.db.BlockedItem
 import com.t7lab.focustime.data.db.BlockedItemType
-import com.t7lab.focustime.ui.components.BlockedItemChip
-import com.t7lab.focustime.ui.components.DurationPicker
+import com.t7lab.focustime.ui.components.BlocklistCard
+import com.t7lab.focustime.ui.components.DurationBottomSheet
 import com.t7lab.focustime.ui.components.RotatingQuoteCard
 import com.t7lab.focustime.ui.components.SessionCompleteOverlay
 import com.t7lab.focustime.ui.theme.TimerTypography
@@ -86,6 +82,7 @@ fun HomeScreen(
     val haptic = LocalHapticFeedback.current
 
     var showPasswordDialog by remember { mutableStateOf(false) }
+    var showDurationSheet by remember { mutableStateOf(false) }
 
     // Session completion celebration overlay
     if (uiState.showSessionComplete) {
@@ -115,25 +112,19 @@ fun HomeScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { padding ->
         val scrollState = rememberScrollState()
-        var contentHeight by remember { mutableIntStateOf(0) }
-        var containerHeight by remember { mutableIntStateOf(0) }
-        val needsScroll = contentHeight > containerHeight
+        val isReady = uiState.blockedItems.isNotEmpty()
 
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .onSizeChanged { containerHeight = it.height }
         ) {
+            // Scrollable content area
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .then(
-                        if (needsScroll) Modifier.verticalScroll(scrollState)
-                        else Modifier
-                    )
-                    .padding(horizontal = 16.dp)
-                    .onSizeChanged { contentHeight = it.height },
+                    .weight(1f)
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 if (uiState.isSessionActive) {
@@ -147,21 +138,40 @@ fun HomeScreen(
                 } else {
                     NewSessionContent(
                         blockedItems = uiState.blockedItems,
-                        selectedDurationMs = uiState.selectedDurationMs,
-                        onDurationSelected = viewModel::selectDuration,
                         onAddApps = onNavigateToAppPicker,
                         onAddUrls = onNavigateToUrlManager,
-                        onRemoveItem = viewModel::removeItem,
-                        onStartFocus = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            viewModel.startSession(onVpnPermissionNeeded)
-                        }
+                        onRemoveItem = viewModel::removeItem
                     )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
             }
+
+            // Fixed bottom button (only shown when not in active session)
+            if (!uiState.isSessionActive) {
+                StartFocusButton(
+                    itemCount = uiState.blockedItems.size,
+                    isReady = isReady,
+                    onStartFocus = { showDurationSheet = true },
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
         }
+    }
+
+    // Duration bottom sheet
+    if (showDurationSheet) {
+        DurationBottomSheet(
+            lastSelectedDurationMs = uiState.selectedDurationMs,
+            itemCount = uiState.blockedItems.size,
+            onStartFocus = { duration ->
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                viewModel.selectDuration(duration)
+                viewModel.startSession(onVpnPermissionNeeded)
+                showDurationSheet = false
+            },
+            onDismiss = { showDurationSheet = false }
+        )
     }
 
     if (showPasswordDialog) {
@@ -284,18 +294,30 @@ private fun ActiveSessionContent(
 @Composable
 private fun NewSessionContent(
     blockedItems: List<BlockedItem>,
-    selectedDurationMs: Long?,
-    onDurationSelected: (Long) -> Unit,
     onAddApps: () -> Unit,
     onAddUrls: () -> Unit,
-    onRemoveItem: (BlockedItem) -> Unit,
-    onStartFocus: () -> Unit
+    onRemoveItem: (BlockedItem) -> Unit
 ) {
     val apps = blockedItems.filter { it.type == BlockedItemType.APP }
     val urls = blockedItems.filter { it.type == BlockedItemType.URL }
-    val isReady = blockedItems.isNotEmpty() && selectedDurationMs != null
 
-    // Hero Start Focus button with pulse animation
+    // Unified blocklist card (Apps + URLs in tabs)
+    BlocklistCard(
+        apps = apps,
+        urls = urls,
+        onAddApp = onAddApps,
+        onAddUrl = onAddUrls,
+        onRemove = onRemoveItem
+    )
+}
+
+@Composable
+private fun StartFocusButton(
+    itemCount: Int,
+    isReady: Boolean,
+    onStartFocus: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -310,119 +332,32 @@ private fun NewSessionContent(
     Button(
         onClick = onStartFocus,
         enabled = isReady,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .height(64.dp)
+            .height(72.dp)
             .scale(pulseScale),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = if (isReady) 6.dp else 0.dp
         )
     ) {
-        Icon(
-            if (isReady) Icons.Default.PlayArrow else Icons.Default.Lock,
-            contentDescription = null,
-            modifier = Modifier.size(ButtonDefaults.IconSize)
-        )
-        Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-        Text(
-            text = if (isReady) "Start Focus" else "Add items to start",
-            style = MaterialTheme.typography.titleMedium
-        )
-    }
-
-    // Duration picker — inline
-    DurationPicker(
-        selectedDurationMs = selectedDurationMs,
-        onDurationSelected = onDurationSelected
-    )
-
-    // Apps section
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (apps.isNotEmpty()) "Apps (${apps.size})" else "Apps",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurface
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    if (isReady) Icons.Default.PlayArrow else Icons.Default.Lock,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
                 )
-                FilledTonalButton(onClick = onAddApps) {
-                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-                    Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                    Text("Add")
-                }
-            }
-            if (apps.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    apps.forEach { item ->
-                        BlockedItemChip(item = item, onRemove = { onRemoveItem(item) })
-                    }
-                }
-            } else {
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Tap Add to choose apps to block",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                    modifier = Modifier.padding(top = 8.dp)
+                    text = "Start Focus",
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
-        }
-    }
-
-    // URLs section
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            if (isReady) {
                 Text(
-                    text = if (urls.isNotEmpty()) "URLs (${urls.size})" else "URLs",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                FilledTonalButton(onClick = onAddUrls) {
-                    Icon(Icons.Default.Language, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-                    Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                    Text("Add")
-                }
-            }
-            if (urls.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    urls.forEach { item ->
-                        BlockedItemChip(item = item, onRemove = { onRemoveItem(item) })
-                    }
-                }
-            } else {
-                Text(
-                    text = "Tap Add to choose URLs to block",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                    modifier = Modifier.padding(top = 8.dp)
+                    text = "$itemCount items to block",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = LocalContentColor.current.copy(alpha = 0.8f)
                 )
             }
         }

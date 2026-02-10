@@ -15,6 +15,11 @@
     <string name="no_items_yet">No items added yet</string>
     <string name="tap_add_apps">Tap Add to choose apps to block</string>
     <string name="tap_add_urls">Tap Add to choose URLs to block</string>
+    <string name="ready_to_focus">Ready to focus?</string>
+    <string name="empty_blocklist_hint">Add the apps and sites that distract you most</string>
+    <string name="add_distracting_apps">Add distracting apps</string>
+    <string name="add_distracting_sites">Add distracting sites</string>
+    <string name="block_during_focus">Block during focus</string>
     <string name="select_duration">Select Duration</string>
     <string name="custom">Custom</string>
     <string name="unlock_with_password">Unlock with password</string>
