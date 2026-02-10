@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -40,10 +41,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.t7lab.focustime.data.db.SessionDao
 import com.t7lab.focustime.data.preferences.PreferencesManager
 import com.t7lab.focustime.service.SessionManager
 import com.t7lab.focustime.ui.components.FocusTimerRing
+import com.t7lab.focustime.ui.theme.DarkSessionColors
 import com.t7lab.focustime.ui.theme.FocusTimeTheme
+import com.t7lab.focustime.ui.theme.LocalSessionColors
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -55,6 +59,7 @@ class BlockedOverlayActivity : ComponentActivity() {
 
     @Inject lateinit var preferencesManager: PreferencesManager
     @Inject lateinit var sessionManager: SessionManager
+    @Inject lateinit var sessionDao: SessionDao
 
     companion object {
         const val EXTRA_PACKAGE_NAME = "extra_package_name"
@@ -81,13 +86,16 @@ class BlockedOverlayActivity : ComponentActivity() {
 
         setContent {
             FocusTimeTheme(isSessionActive = true) {
-                BlockedScreen(
-                    preferencesManager = preferencesManager,
-                    sessionManager = sessionManager,
-                    blockedAppName = blockedAppName,
-                    onGoBack = { goHome() },
-                    onUnlocked = { finish() }
-                )
+                CompositionLocalProvider(LocalSessionColors provides DarkSessionColors) {
+                    BlockedScreen(
+                        preferencesManager = preferencesManager,
+                        sessionManager = sessionManager,
+                        sessionDao = sessionDao,
+                        blockedAppName = blockedAppName,
+                        onGoBack = { goHome() },
+                        onUnlocked = { finish() }
+                    )
+                }
             }
         }
     }
@@ -107,6 +115,7 @@ class BlockedOverlayActivity : ComponentActivity() {
 private fun BlockedScreen(
     preferencesManager: PreferencesManager,
     sessionManager: SessionManager,
+    sessionDao: SessionDao,
     blockedAppName: String?,
     onGoBack: () -> Unit,
     onUnlocked: () -> Unit
@@ -123,9 +132,17 @@ private fun BlockedScreen(
 
     LaunchedEffect(Unit) {
         hasPassword = preferencesManager.hasPasswordSet()
-        var initialized = false
+
+        // Fetch actual session duration from database
+        val session = sessionDao.getActiveSessionOnce()
+        if (session != null) {
+            totalDurationMs = session.durationMs
+            endTimeMs = session.endTime
+        }
+
         while (isActive) {
-            val endTime = preferencesManager.getSessionEndTimeOnce()
+            val endTime = endTimeMs.takeIf { it > 0 }
+                ?: preferencesManager.getSessionEndTimeOnce()
             val remaining = endTime - System.currentTimeMillis()
             if (remaining <= 0) {
                 onUnlocked()
@@ -133,11 +150,6 @@ private fun BlockedScreen(
             }
             remainingTimeMs = remaining
             endTimeMs = endTime
-
-            if (!initialized) {
-                totalDurationMs = remaining
-                initialized = true
-            }
 
             delay(1000)
         }
