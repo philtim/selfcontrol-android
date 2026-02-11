@@ -1,6 +1,8 @@
 package com.t7lab.focustime.ui.apppicker
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.provider.Settings
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -26,7 +28,10 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Search
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.compose.ui.Modifier
@@ -61,6 +67,12 @@ fun AppPickerScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val haptic = LocalHapticFeedback.current
+    val context = LocalContext.current
+
+    LifecycleResumeEffect(Unit) {
+        viewModel.refreshIfNeeded()
+        onPauseOrDispose {}
+    }
 
     Scaffold(
         topBar = {
@@ -112,6 +124,38 @@ fun AppPickerScreen(
                 )
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    // Usage stats permission banner
+                    if (uiState.searchQuery.isBlank() && uiState.needsUsageStatsPermission) {
+                        item(key = "usage_stats_banner") {
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Text(
+                                        text = stringResource(R.string.enable_usage_access),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                    FilledTonalButton(
+                                        onClick = {
+                                            context.startActivity(
+                                                Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                                            )
+                                        },
+                                        modifier = Modifier.padding(top = 8.dp)
+                                    ) {
+                                        Text(stringResource(R.string.grant_permission))
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     // Frequently used apps section (shown first for fast loading)
                     if (uiState.searchQuery.isBlank() && uiState.frequentlyUsedApps.isNotEmpty()) {
                         item(key = "frequent_header") {

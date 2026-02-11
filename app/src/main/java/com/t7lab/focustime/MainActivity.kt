@@ -142,6 +142,12 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onVpnPermissionNeeded = {
                                     requestVpnPermission()
+                                },
+                                onUsageStatsPermissionNeeded = {
+                                    requestUsageStatsPermission()
+                                },
+                                onOverlayPermissionNeeded = {
+                                    requestOverlayPermission()
                                 }
                             )
                         }

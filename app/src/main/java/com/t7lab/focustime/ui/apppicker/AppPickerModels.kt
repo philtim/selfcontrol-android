@@ -11,5 +11,6 @@ data class AppPickerUiState(
     val allApps: List<AppInfo> = emptyList(),
     val filteredApps: List<AppInfo> = emptyList(),
     val frequentlyUsedApps: List<AppInfo> = emptyList(),
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val needsUsageStatsPermission: Boolean = false
 )
