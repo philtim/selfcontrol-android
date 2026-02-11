@@ -90,6 +90,8 @@ fun HomeScreen(
     onNavigateToUrlManager: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onVpnPermissionNeeded: () -> Unit,
+    onUsageStatsPermissionNeeded: () -> Unit,
+    onOverlayPermissionNeeded: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -98,6 +100,8 @@ fun HomeScreen(
     var showPasswordDialog by remember { mutableStateOf(false) }
     var showDurationSheet by remember { mutableStateOf(false) }
     var showVpnDisclosure by remember { mutableStateOf(false) }
+    var showUsageStatsDialog by remember { mutableStateOf(false) }
+    var showOverlayDialog by remember { mutableStateOf(false) }
 
     // Session completion celebration overlay
     if (uiState.showSessionComplete) {
@@ -151,7 +155,9 @@ fun HomeScreen(
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 viewModel.selectDuration(duration)
                 viewModel.startSession(
-                    onVpnPermissionNeeded = { showVpnDisclosure = true }
+                    onVpnPermissionNeeded = { showVpnDisclosure = true },
+                    onUsageStatsPermissionNeeded = { showUsageStatsDialog = true },
+                    onOverlayPermissionNeeded = { showOverlayDialog = true }
                 )
                 showDurationSheet = false
             },
@@ -168,6 +174,32 @@ fun HomeScreen(
             },
             onDecline = {
                 showVpnDisclosure = false
+            }
+        )
+    }
+
+    // Usage stats permission dialog (required for app blocking)
+    if (showUsageStatsDialog) {
+        UsageStatsPermissionDialog(
+            onAccept = {
+                showUsageStatsDialog = false
+                onUsageStatsPermissionNeeded()
+            },
+            onDecline = {
+                showUsageStatsDialog = false
+            }
+        )
+    }
+
+    // Overlay permission dialog (required for app blocking)
+    if (showOverlayDialog) {
+        OverlayPermissionDialog(
+            onAccept = {
+                showOverlayDialog = false
+                onOverlayPermissionNeeded()
+            },
+            onDecline = {
+                showOverlayDialog = false
             }
         )
     }
@@ -525,6 +557,60 @@ private fun VpnDisclosureDialog(
         dismissButton = {
             TextButton(onClick = onDecline) {
                 Text(stringResource(R.string.vpn_disclosure_decline))
+            }
+        }
+    )
+}
+
+@Composable
+private fun UsageStatsPermissionDialog(
+    onAccept: () -> Unit,
+    onDecline: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDecline,
+        title = { Text(stringResource(R.string.usage_access_needed)) },
+        text = {
+            Text(
+                text = stringResource(R.string.enable_usage_access_session),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        confirmButton = {
+            Button(onClick = onAccept) {
+                Text(stringResource(R.string.grant_permission))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDecline) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
+}
+
+@Composable
+private fun OverlayPermissionDialog(
+    onAccept: () -> Unit,
+    onDecline: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDecline,
+        title = { Text(stringResource(R.string.overlay_permission_needed)) },
+        text = {
+            Text(
+                text = stringResource(R.string.enable_overlay_session),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        confirmButton = {
+            Button(onClick = onAccept) {
+                Text(stringResource(R.string.grant_permission))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDecline) {
+                Text(stringResource(R.string.cancel))
             }
         }
     )

@@ -161,6 +161,9 @@
 
     <!-- Permissions -->
     <string name="usage_access_needed">Usage access permission is needed to detect blocked apps.</string>
+    <string name="enable_usage_access">Grant usage access to see your most-used apps at the top of this list.</string>
+    <string name="enable_usage_access_session">FocusTime needs usage access permission to detect when you open a blocked app. Please enable it in Settings.</string>
+    <string name="enable_overlay_session">FocusTime needs permission to display over other apps so it can block you from using them. Please enable it in Settings.</string>
     <string name="vpn_permission_needed">VPN permission is needed to block URLs.</string>
     <string name="notification_permission_needed">Notification permission is needed to show focus session status.</string>
     <string name="overlay_permission_needed">Overlay permission is needed to block apps.</string>
