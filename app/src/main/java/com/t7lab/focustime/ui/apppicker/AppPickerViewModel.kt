@@ -1,9 +1,11 @@
 package com.t7lab.focustime.ui.apppicker
 
+import android.app.AppOpsManager
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.os.Process
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.t7lab.focustime.data.repository.BlocklistRepository
@@ -35,9 +37,28 @@ class AppPickerViewModel @Inject constructor(
         loadApps()
     }
 
+    fun refreshIfNeeded() {
+        val hadPermission = !_uiState.value.needsUsageStatsPermission
+        val hasPermission = hasUsageStatsPermission()
+        if (!hadPermission && hasPermission) {
+            loadApps()
+        }
+    }
+
+    private fun hasUsageStatsPermission(): Boolean {
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode = appOps.unsafeCheckOpNoThrow(
+            AppOpsManager.OPSTR_GET_USAGE_STATS,
+            Process.myUid(),
+            context.packageName
+        )
+        return mode == AppOpsManager.MODE_ALLOWED
+    }
+
     private fun loadApps() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
+            val needsPermission = !hasUsageStatsPermission()
 
             val (allAppInfos, frequentlyUsed) = withContext(Dispatchers.IO) {
                 val pm = context.packageManager
@@ -75,7 +96,8 @@ class AppPickerViewModel @Inject constructor(
                 allApps = allAppInfos,
                 filteredApps = allAppInfos,
                 frequentlyUsedApps = frequentlyUsed,
-                isLoading = false
+                isLoading = false,
+                needsUsageStatsPermission = needsPermission
             )
         }
     }

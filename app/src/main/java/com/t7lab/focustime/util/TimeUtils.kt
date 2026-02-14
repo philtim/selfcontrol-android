@@ -3,9 +3,8 @@ package com.t7lab.focustime.util
 import android.content.Context
 import androidx.annotation.StringRes
 import com.t7lab.focustime.R
-import java.text.SimpleDateFormat
+import android.text.format.DateFormat
 import java.util.Date
-import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 fun formatDuration(millis: Long): String {
@@ -23,7 +22,7 @@ fun formatDuration(millis: Long): String {
 
 fun formatEndTime(endTimeMs: Long, context: Context): String {
     if (endTimeMs <= 0) return ""
-    val format = SimpleDateFormat("h:mm a", Locale.getDefault())
+    val format = DateFormat.getTimeFormat(context)
     return context.getString(R.string.until_time_format, format.format(Date(endTimeMs)))
 }
 

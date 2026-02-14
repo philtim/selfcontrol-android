@@ -119,7 +119,12 @@ class AppMonitorService : Service() {
 
         while (usageEvents.hasNextEvent()) {
             usageEvents.getNextEvent(event)
-            if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+            // MOVE_TO_FOREGROUND (1) is deprecated since API 29;
+            // ACTIVITY_RESUMED (7) is the modern replacement
+            if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED ||
+                @Suppress("DEPRECATION")
+                event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND
+            ) {
                 if (event.timeStamp >= lastForegroundTime) {
                     lastForegroundTime = event.timeStamp
                     lastForegroundPackage = event.packageName

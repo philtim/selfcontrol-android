@@ -124,8 +124,26 @@ class HomeViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(selectedDurationMs = durationMs)
     }
 
-    fun startSession(onVpnPermissionNeeded: () -> Unit) {
+    fun startSession(
+        onVpnPermissionNeeded: () -> Unit,
+        onUsageStatsPermissionNeeded: () -> Unit,
+        onOverlayPermissionNeeded: () -> Unit
+    ) {
         val duration = _uiState.value.selectedDurationMs ?: return
+
+        val hasApps = _uiState.value.blockedItems.any { it.type == BlockedItemType.APP }
+        if (hasApps) {
+            // Check usage stats permission (to detect foreground app)
+            if (!sessionManager.hasUsageStatsPermission()) {
+                onUsageStatsPermissionNeeded()
+                return
+            }
+            // Check overlay permission (to show blocker over blocked apps)
+            if (!sessionManager.hasOverlayPermission()) {
+                onOverlayPermissionNeeded()
+                return
+            }
+        }
 
         // Check if we need VPN permission (when blocking URLs)
         val hasUrls = _uiState.value.blockedItems.any { it.type == BlockedItemType.URL }
