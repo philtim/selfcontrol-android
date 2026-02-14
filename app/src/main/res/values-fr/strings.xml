@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home Screen -->
+    <string name="start_focus">D\u00e9marrer le focus</string>
+    <string name="add_items_to_start">Ajoutez des \u00e9l\u00e9ments pour commencer</string>
+    <string name="focus_active">Focus actif</string>
+    <string name="time_remaining">Temps restant</string>
+    <string name="remaining">restant</string>
+    <string name="add_apps">Ajouter des apps</string>
+    <string name="add_urls">Ajouter des URLs</string>
+    <string name="blocked_apps">Apps bloqu\u00e9es</string>
+    <string name="blocked_urls">URLs bloqu\u00e9es</string>
+    <string name="no_items_yet">Aucun \u00e9l\u00e9ment ajout\u00e9</string>
+    <string name="tap_add_apps">Appuyez sur Ajouter pour choisir les apps \u00e0 bloquer</string>
+    <string name="tap_add_urls">Appuyez sur Ajouter pour choisir les URLs \u00e0 bloquer</string>
+    <string name="ready_to_focus">Pr\u00eat \u00e0 vous concentrer ?</string>
+    <string name="empty_blocklist_hint">Ajoutez les apps et sites qui vous distraient le plus</string>
+    <string name="add_distracting_apps">Ajouter des apps distrayantes</string>
+    <string name="add_distracting_sites">Ajouter des sites distrayants</string>
+    <string name="block_during_focus">Bloquer pendant le focus</string>
+    <string name="select_duration">Choisir la dur\u00e9e</string>
+    <string name="custom">Personnalis\u00e9</string>
+    <string name="unlock_with_password">D\u00e9verrouiller avec mot de passe</string>
+    <string name="session_ended">Session de focus termin\u00e9e !</string>
+    <string name="session_ended_body">Bon travail ! Vos apps et URLs sont maintenant d\u00e9bloqu\u00e9es.</string>
+    <string name="items_to_block">%1$d \u00e9l\u00e9ments \u00e0 bloquer</string>
+    <string name="emergency_unlock">D\u00e9verrouillage d\u0027urgence</string>
+    <string name="break_focus_session">Interrompre la session de focus ?</string>
+    <string name="break_focus_warning">Interrompre le focus r\u00e9duit son efficacit\u00e9. \u00cates-vous s\u00fbr de vouloir d\u00e9verrouiller ?</string>
+    <string name="keep_focusing">Rester concentr\u00e9</string>
+    <string name="emergency_override">Annulation d\u0027urgence</string>
+    <string name="emergency_override_title">Annulation d\u0027urgence</string>
+    <string name="emergency_override_description">Entrez le mot de passe ma\u00eetre pour terminer cette session de focus.</string>
+    <string name="password">Mot de passe</string>
+    <string name="incorrect_password">Mot de passe incorrect</string>
+    <string name="no_password_has_been_set">Aucun mot de passe ma\u00eetre n\u0027a \u00e9t\u00e9 d\u00e9fini</string>
+    <string name="unlock">D\u00e9verrouiller</string>
+    <string name="cancel">Annuler</string>
+    <string name="confirm">Confirmer</string>
+    <string name="items_summary">%1$d \u00e9l\u00e9ments \u2022 %2$s</string>
+
+    <!-- Session Complete -->
+    <string name="well_done">Bien jou\u00e9 !</string>
+    <string name="you_stayed_focused_for">Vous \u00eates rest\u00e9 concentr\u00e9 pendant</string>
+    <string name="session_complete_message">Vos apps et URLs sont maintenant d\u00e9bloqu\u00e9es.\nContinuez comme \u00e7a !</string>
+    <string name="continue_label">Continuer</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title_1">Prenez le contr\u00f4le\nde votre concentration</string>
+    <string name="onboarding_desc_1">FocusTime bloque les apps et sites web distrayants pour que vous puissiez vous concentrer sur l\u0027essentiel.</string>
+    <string name="onboarding_title_2">Choisissez quoi\nbloquer</string>
+    <string name="onboarding_desc_2">Choisissez parmi les distractions courantes ou ajoutez vos propres apps et sites web. C\u0027est vous qui d\u00e9cidez.</string>
+    <string name="onboarding_title_3">R\u00e9glez un minuteur\net c\u0027est parti</string>
+    <string name="onboarding_desc_3">Choisissez une dur\u00e9e, appuyez sur d\u00e9marrer et restez concentr\u00e9. FocusTime vous aide \u00e0 rester responsable jusqu\u0027\u00e0 la fin du minuteur.</string>
+    <string name="next">Suivant</string>
+    <string name="get_started">Commencer</string>
+    <string name="skip">Passer</string>
+
+    <!-- App Picker -->
+    <string name="select_apps">S\u00e9lectionner les apps \u00e0 bloquer</string>
+    <string name="search_apps">Rechercher des apps\u2026</string>
+    <string name="common_distractions">Distractions courantes</string>
+    <string name="all_apps">Toutes les apps</string>
+    <string name="done">Termin\u00e9</string>
+    <string name="frequently_used">Fr\u00e9quemment utilis\u00e9es</string>
+    <string name="app_icon_description">Ic\u00f4ne de %1$s</string>
+    <string name="selected">S\u00e9lectionn\u00e9</string>
+    <string name="not_selected">Non s\u00e9lectionn\u00e9</string>
+    <string name="clear">Effacer</string>
+    <string name="back">Retour</string>
+
+    <!-- URL Manager -->
+    <string name="manage_urls">G\u00e9rer les URLs</string>
+    <string name="enter_domain">Entrer un domaine</string>
+    <string name="enter_url_hint">Entrer un domaine (ex. instagram.com ou *.youtube.com)</string>
+    <string name="enter_url_placeholder">ex. instagram.com ou *.youtube.com</string>
+    <string name="add">Ajouter</string>
+    <string name="invalid_url">Format d\u0027URL invalide</string>
+    <string name="invalid_domain_format">Format de domaine invalide. Utilisez ex. instagram.com ou *.youtube.com</string>
+    <string name="wildcard_hint">Utilisez *.domaine.com pour bloquer le domaine et tous les sous-domaines</string>
+    <string name="url_blocking_rules">R\u00e8gles de blocage d\u0027URLs</string>
+    <string name="url_blocking_rules_explanation">youtube.com \u2192 bloque uniquement youtube.com\n*.youtube.com \u2192 bloque youtube.com et tous les sous-domaines</string>
+    <string name="no_urls_added">Aucune URL ajout\u00e9e. Ajoutez des domaines ci-dessus pour les bloquer pendant les sessions de focus.</string>
+
+    <!-- Settings -->
+    <string name="settings">Param\u00e8tres</string>
+    <string name="master_password">Mot de passe ma\u00eetre</string>
+    <string name="set_password">D\u00e9finir le mot de passe</string>
+    <string name="change_password">Changer le mot de passe</string>
+    <string name="remove_password">Supprimer le mot de passe</string>
+    <string name="confirm_remove_password">Entrez votre mot de passe actuel pour confirmer la suppression.</string>
+    <string name="current_password">Mot de passe actuel</string>
+    <string name="new_password">Nouveau mot de passe</string>
+    <string name="confirm_password">Confirmer le mot de passe</string>
+    <string name="confirm_new_password">Confirmer le nouveau mot de passe</string>
+    <string name="password_set_success">Mot de passe d\u00e9fini avec succ\u00e8s</string>
+    <string name="password_changed_success">Mot de passe chang\u00e9 avec succ\u00e8s</string>
+    <string name="password_removed_success">Mot de passe supprim\u00e9</string>
+    <string name="passwords_dont_match">Les mots de passe ne correspondent pas</string>
+    <string name="wrong_password">Mot de passe incorrect</string>
+    <string name="current_password_incorrect">Le mot de passe actuel est incorrect</string>
+    <string name="password_too_short">Le mot de passe doit contenir au moins 4 caract\u00e8res</string>
+    <string name="cannot_change_during_session">Impossible de changer le mot de passe pendant une session active</string>
+    <string name="cannot_remove_during_session">Impossible de supprimer le mot de passe pendant une session active</string>
+    <string name="no_password_set">Aucun mot de passe ma\u00eetre d\u00e9fini</string>
+    <string name="password_description">D\u00e9finissez un mot de passe ma\u00eetre pour pouvoir d\u00e9verrouiller les sessions de focus. Partagez-le avec une personne de confiance pour ne pas pouvoir le d\u00e9verrouiller vous-m\u00eame.</string>
+    <string name="password_is_set">Mot de passe d\u00e9fini</string>
+    <string name="password_session_active_warning">Les param\u00e8tres du mot de passe ne peuvent pas \u00eatre modifi\u00e9s pendant une session de focus active.</string>
+    <string name="hide_password">Masquer le mot de passe</string>
+    <string name="show_password">Afficher le mot de passe</string>
+    <string name="about">\u00c0 propos</string>
+    <string name="version_format">Version %1$s</string>
+    <string name="made_by">Cr\u00e9\u00e9 par T7Lab</string>
+    <string name="privacy_policy">Politique de confidentialit\u00e9</string>
+    <string name="privacy_policy_url">https://t7lab.com/focustime/privacy</string>
+    <string name="privacy_policy_summary">FocusTime stocke toutes les donn\u00e9es localement sur votre appareil. Aucune donn\u00e9e personnelle n\u0027est collect\u00e9e, transmise ou partag\u00e9e avec des tiers.</string>
+
+    <!-- Blocked overlay -->
+    <string name="focus_mode_active">Vous \u00eates en mode Focus</string>
+    <string name="app_blocked_named">%1$s est bloqu\u00e9e</string>
+    <string name="app_blocked_generic">Cette app est bloqu\u00e9e</string>
+    <string name="return_home">Retour \u00e0 l\u0027accueil</string>
+    <string name="return_to_home">Retour \u00e0 l\u0027\u00e9cran d\u0027accueil</string>
+    <string name="enter_password_to_unlock">Entrez le mot de passe pour d\u00e9verrouiller</string>
+
+    <!-- Legacy overlay strings -->
+    <string name="app_blocked_title">App bloqu\u00e9e</string>
+    <string name="app_blocked_message">Cette app est bloqu\u00e9e pendant votre session de focus.\n\nTemps restant : %1$s</string>
+    <string name="go_back">Retour</string>
+
+    <!-- Duration -->
+    <string name="how_long">Combien de temps ?</string>
+    <string name="set_custom_duration">D\u00e9finir une dur\u00e9e personnalis\u00e9e</string>
+    <string name="hours_minutes">Heures : Minutes</string>
+    <string name="set">D\u00e9finir</string>
+    <string name="duration_30_min">30 min</string>
+    <string name="duration_1_hour">1 heure</string>
+    <string name="duration_2_hours">2 heures</string>
+    <string name="duration_4_hours">4 heures</string>
+    <string name="duration_6_hours">6 heures</string>
+    <string name="duration_8_hours">8 heures</string>
+    <string name="until_time_format">jusqu\u0027\u00e0 %1$s</string>
+    <string name="duration_hours_minutes">%1$dh %2$dm</string>
+    <string name="duration_hours_only">%1$dh</string>
+    <string name="duration_minutes_only">%1$dm</string>
+
+    <!-- BlockedItemChip -->
+    <string name="remove">Supprimer</string>
+
+    <!-- Tabs -->
+    <string name="apps_tab_count">Apps (%1$d)</string>
+    <string name="apps_tab">Apps</string>
+    <string name="urls_tab_count">URLs (%1$d)</string>
+    <string name="urls_tab">URLs</string>
+
+    <!-- Notification starting -->
+    <string name="notification_starting">D\u00e9marrage\u2026</string>
+
+    <!-- Permissions -->
+    <string name="usage_access_needed">L\u0027acc\u00e8s aux donn\u00e9es d\u0027utilisation est n\u00e9cessaire pour d\u00e9tecter les apps bloqu\u00e9es.</string>
+    <string name="enable_usage_access">Accordez l\u0027acc\u00e8s aux donn\u00e9es d\u0027utilisation pour voir vos apps les plus utilis\u00e9es en haut de la liste.</string>
+    <string name="enable_usage_access_session">FocusTime a besoin de l\u0027acc\u00e8s aux donn\u00e9es d\u0027utilisation pour d\u00e9tecter quand vous ouvrez une app bloqu\u00e9e. Veuillez l\u0027activer dans les Param\u00e8tres.</string>
+    <string name="enable_overlay_session">FocusTime a besoin de l\u0027autorisation de s\u0027afficher par-dessus les autres apps pour pouvoir les bloquer. Veuillez l\u0027activer dans les Param\u00e8tres.</string>
+    <string name="vpn_permission_needed">L\u0027autorisation VPN est n\u00e9cessaire pour bloquer les URLs.</string>
+    <string name="notification_permission_needed">L\u0027autorisation de notification est n\u00e9cessaire pour afficher le statut de la session de focus.</string>
+    <string name="overlay_permission_needed">L\u0027autorisation de superposition est n\u00e9cessaire pour bloquer les apps.</string>
+    <string name="grant_permission">Accorder l\u0027autorisation</string>
+
+    <!-- VPN Disclosure -->
+    <string name="vpn_disclosure_title">Connexion VPN requise</string>
+    <string name="vpn_disclosure_message">Pour bloquer les sites web distrayants, FocusTime cr\u00e9e une connexion VPN locale sur votre appareil. Ce VPN :\n\n\u2022 N\u0027intercepte que les requ\u00eates DNS pour bloquer les sites que vous avez s\u00e9lectionn\u00e9s\n\u2022 Fonctionne enti\u00e8rement sur votre appareil \u2014 aucune donn\u00e9e n\u0027est envoy\u00e9e \u00e0 des serveurs externes\n\u2022 Ne surveille, n\u0027enregistre et ne transmet pas votre activit\u00e9 de navigation\n\u2022 N\u0027est actif que pendant votre session de focus\n\nVous serez invit\u00e9 \u00e0 approuver la connexion VPN ensuite.</string>
+    <string name="vpn_disclosure_accept">J\u0027ai compris, continuer</string>
+    <string name="vpn_disclosure_decline">Annuler</string>
+
+    <!-- Notification -->
+    <string name="focus_channel_name">Session de focus</string>
+    <string name="focus_channel_description">Affiche le statut de votre session de focus active</string>
+    <string name="notification_title">FocusTime actif</string>
+    <string name="notification_text">%1$s restant</string>
+    <string name="notification_monitoring_apps">Surveillance des apps bloqu\u00e9es</string>
+
+    <!-- Motivational Quotes -->
+    <string-array name="motivational_quote_texts">
+        <item>Le secret pour avancer, c\u0027est de commencer.</item>
+        <item>Concentrez-vous sur \u00eatre productif plut\u00f4t qu\u0027occup\u00e9.</item>
+        <item>C\u0027est dans nos moments les plus sombres que nous devons nous concentrer pour voir la lumi\u00e8re.</item>
+        <item>Concentrez toutes vos pens\u00e9es sur le travail en cours.</item>
+        <item>Le guerrier victorieux est l\u0027homme ordinaire avec une concentration laser.</item>
+        <item>L\u00e0 o\u00f9 va la concentration, l\u0027\u00e9nergie suit.</item>
+        <item>Fais ce que tu peux, avec ce que tu as, l\u00e0 o\u00f9 tu es.</item>
+        <item>La seule fa\u00e7on de faire du grand travail est d\u0027aimer ce que vous faites.</item>
+        <item>Vous n\u0027avez pas besoin d\u0027\u00eatre formidable pour commencer, mais vous devez commencer pour devenir formidable.</item>
+        <item>Affamez vos distractions, nourrissez votre concentration.</item>
+        <item>Presque tout remarche si on le d\u00e9branche quelques minutes, vous y compris.</item>
+        <item>Votre avenir est cr\u00e9\u00e9 par ce que vous faites aujourd\u0027hui, pas demain.</item>
+        <item>La simplicit\u00e9 est la sophistication supr\u00eame.</item>
+        <item>Le travail en profondeur est la capacit\u00e9 de se concentrer sans distraction sur une t\u00e2che cognitivement exigeante.</item>
+        <item>Vous n\u0027atteindrez jamais votre destination si vous vous arr\u00eatez pour jeter des pierres \u00e0 chaque chien qui aboie.</item>
+    </string-array>
+    <string-array name="motivational_quote_authors">
+        <item>Mark Twain</item>
+        <item>Tim Ferriss</item>
+        <item>Aristote</item>
+        <item>Alexander Graham Bell</item>
+        <item>Bruce Lee</item>
+        <item>Tony Robbins</item>
+        <item>Theodore Roosevelt</item>
+        <item>Steve Jobs</item>
+        <item>Zig Ziglar</item>
+        <item>Daniel Goleman</item>
+        <item>Anne Lamott</item>
+        <item>Robert Kiyosaki</item>
+        <item>L\u00e9onard de Vinci</item>
+        <item>Cal Newport</item>
+        <item>Winston Churchill</item>
+    </string-array>
+</resources>
