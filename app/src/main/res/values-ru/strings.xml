@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home Screen -->
+    <string name="start_focus">Начать фокус</string>
+    <string name="add_items_to_start">Добавьте элементы, чтобы начать</string>
+    <string name="focus_active">Фокус активен</string>
+    <string name="time_remaining">Оставшееся время</string>
+    <string name="remaining">осталось</string>
+    <string name="add_apps">Добавить приложения</string>
+    <string name="add_urls">Добавить URL</string>
+    <string name="blocked_apps">Заблокированные приложения</string>
+    <string name="blocked_urls">Заблокированные URL</string>
+    <string name="no_items_yet">Пока ничего не добавлено</string>
+    <string name="tap_add_apps">Нажмите «Добавить», чтобы выбрать приложения для блокировки</string>
+    <string name="tap_add_urls">Нажмите «Добавить», чтобы выбрать URL для блокировки</string>
+    <string name="ready_to_focus">Готовы сосредоточиться?</string>
+    <string name="empty_blocklist_hint">Добавьте приложения и сайты, которые отвлекают вас больше всего</string>
+    <string name="add_distracting_apps">Добавить отвлекающие приложения</string>
+    <string name="add_distracting_sites">Добавить отвлекающие сайты</string>
+    <string name="block_during_focus">Блокировать во время фокуса</string>
+    <string name="select_duration">Выбрать длительность</string>
+    <string name="custom">Свой вариант</string>
+    <string name="unlock_with_password">Разблокировать паролем</string>
+    <string name="session_ended">Сессия фокуса завершена!</string>
+    <string name="session_ended_body">Отличная работа! Ваши приложения и URL теперь разблокированы.</string>
+    <string name="items_to_block">Элементов для блокировки: %1$d</string>
+    <string name="emergency_unlock">Экстренная разблокировка</string>
+    <string name="break_focus_session">Прервать сессию фокуса?</string>
+    <string name="break_focus_warning">Досрочное прерывание снижает эффективность. Вы уверены, что хотите разблокировать?</string>
+    <string name="keep_focusing">Продолжить фокус</string>
+    <string name="emergency_override">Экстренное отключение</string>
+    <string name="emergency_override_title">Экстренное отключение</string>
+    <string name="emergency_override_description">Введите мастер-пароль, чтобы досрочно завершить эту сессию фокуса.</string>
+    <string name="password">Пароль</string>
+    <string name="incorrect_password">Неверный пароль</string>
+    <string name="no_password_has_been_set">Мастер-пароль не установлен</string>
+    <string name="unlock">Разблокировать</string>
+    <string name="cancel">Отмена</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="items_summary">%1$d элементов \u2022 %2$s</string>
+
+    <!-- Session Complete -->
+    <string name="well_done">Отлично!</string>
+    <string name="you_stayed_focused_for">Вы были сосредоточены</string>
+    <string name="session_complete_message">Ваши приложения и URL теперь разблокированы.\nТак держать!</string>
+    <string name="continue_label">Продолжить</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title_1">Возьмите под контроль\nсвою концентрацию</string>
+    <string name="onboarding_desc_1">FocusTime блокирует отвлекающие приложения и сайты, чтобы вы могли сосредоточиться на самом важном.</string>
+    <string name="onboarding_title_2">Выберите, что\nзаблокировать</string>
+    <string name="onboarding_desc_2">Выберите из списка частых отвлечений или добавьте свои приложения и сайты. Вы решаете, что блокировать.</string>
+    <string name="onboarding_title_3">Установите таймер\nи начните</string>
+    <string name="onboarding_desc_3">Выберите длительность, нажмите «Старт» и сосредоточьтесь. FocusTime поможет вам не отвлекаться до конца таймера.</string>
+    <string name="next">Далее</string>
+    <string name="get_started">Начать</string>
+    <string name="skip">Пропустить</string>
+
+    <!-- App Picker -->
+    <string name="select_apps">Выберите приложения для блокировки</string>
+    <string name="search_apps">Поиск приложений\u2026</string>
+    <string name="common_distractions">Частые отвлечения</string>
+    <string name="all_apps">Все приложения</string>
+    <string name="done">Готово</string>
+    <string name="frequently_used">Часто используемые</string>
+    <string name="app_icon_description">Значок %1$s</string>
+    <string name="selected">Выбрано</string>
+    <string name="not_selected">Не выбрано</string>
+    <string name="clear">Очистить</string>
+    <string name="back">Назад</string>
+
+    <!-- URL Manager -->
+    <string name="manage_urls">Управление URL</string>
+    <string name="enter_domain">Введите домен</string>
+    <string name="enter_url_hint">Введите домен (напр. instagram.com или *.youtube.com)</string>
+    <string name="enter_url_placeholder">напр. instagram.com или *.youtube.com</string>
+    <string name="add">Добавить</string>
+    <string name="invalid_url">Неверный формат URL</string>
+    <string name="invalid_domain_format">Неверный формат домена. Используйте напр. instagram.com или *.youtube.com</string>
+    <string name="wildcard_hint">Используйте *.domain.com для блокировки домена и всех поддоменов</string>
+    <string name="url_blocking_rules">Правила блокировки URL</string>
+    <string name="url_blocking_rules_explanation">youtube.com \u2192 блокирует только youtube.com\n*.youtube.com \u2192 блокирует youtube.com и все поддомены</string>
+    <string name="no_urls_added">URL пока не добавлены. Добавьте домены выше, чтобы блокировать их во время сессий фокуса.</string>
+
+    <!-- Settings -->
+    <string name="settings">Настройки</string>
+    <string name="master_password">Мастер-пароль</string>
+    <string name="set_password">Установить пароль</string>
+    <string name="change_password">Изменить пароль</string>
+    <string name="remove_password">Удалить пароль</string>
+    <string name="confirm_remove_password">Введите текущий пароль для подтверждения удаления.</string>
+    <string name="current_password">Текущий пароль</string>
+    <string name="new_password">Новый пароль</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+    <string name="confirm_new_password">Подтвердите новый пароль</string>
+    <string name="password_set_success">Пароль успешно установлен</string>
+    <string name="password_changed_success">Пароль успешно изменён</string>
+    <string name="password_removed_success">Пароль удалён</string>
+    <string name="passwords_dont_match">Пароли не совпадают</string>
+    <string name="wrong_password">Неверный пароль</string>
+    <string name="current_password_incorrect">Текущий пароль неверен</string>
+    <string name="password_too_short">Пароль должен содержать не менее 4 символов</string>
+    <string name="cannot_change_during_session">Невозможно изменить пароль во время активной сессии</string>
+    <string name="cannot_remove_during_session">Невозможно удалить пароль во время активной сессии</string>
+    <string name="no_password_set">Мастер-пароль не установлен</string>
+    <string name="password_description">Установите мастер-пароль для досрочной разблокировки сессий фокуса. Поделитесь им с тем, кому доверяете, чтобы не разблокировать самостоятельно.</string>
+    <string name="password_is_set">Пароль установлен</string>
+    <string name="password_session_active_warning">Настройки пароля нельзя изменить во время активной сессии фокуса.</string>
+    <string name="hide_password">Скрыть пароль</string>
+    <string name="show_password">Показать пароль</string>
+    <string name="about">О приложении</string>
+    <string name="version_format">Версия %1$s</string>
+    <string name="made_by">Создано T7Lab</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="privacy_policy_url">https://t7lab.com/focustime/privacy</string>
+    <string name="privacy_policy_summary">FocusTime хранит все данные локально на вашем устройстве. Личные данные не собираются, не передаются и не предоставляются третьим лицам.</string>
+
+    <!-- Blocked overlay -->
+    <string name="focus_mode_active">Вы в режиме фокуса</string>
+    <string name="app_blocked_named">%1$s заблокировано</string>
+    <string name="app_blocked_generic">Это приложение заблокировано</string>
+    <string name="return_home">На главную</string>
+    <string name="return_to_home">Вернуться на главный экран</string>
+    <string name="enter_password_to_unlock">Введите пароль для разблокировки</string>
+
+    <!-- Legacy overlay strings -->
+    <string name="app_blocked_title">Приложение заблокировано</string>
+    <string name="app_blocked_message">Это приложение заблокировано во время сессии фокуса.\n\nОставшееся время: %1$s</string>
+    <string name="go_back">Назад</string>
+
+    <!-- Duration -->
+    <string name="how_long">Как долго?</string>
+    <string name="set_custom_duration">Установить свою длительность</string>
+    <string name="hours_minutes">Часы : Минуты</string>
+    <string name="set">Установить</string>
+    <string name="duration_30_min">30 мин</string>
+    <string name="duration_1_hour">1 час</string>
+    <string name="duration_2_hours">2 часа</string>
+    <string name="duration_4_hours">4 часа</string>
+    <string name="duration_6_hours">6 часов</string>
+    <string name="duration_8_hours">8 часов</string>
+    <string name="until_time_format">до %1$s</string>
+    <string name="duration_hours_minutes">%1$dч %2$dм</string>
+    <string name="duration_hours_only">%1$dч</string>
+    <string name="duration_minutes_only">%1$dм</string>
+
+    <!-- BlockedItemChip -->
+    <string name="remove">Удалить</string>
+
+    <!-- Tabs -->
+    <string name="apps_tab_count">Приложения (%1$d)</string>
+    <string name="apps_tab">Приложения</string>
+    <string name="urls_tab_count">URL (%1$d)</string>
+    <string name="urls_tab">URL</string>
+
+    <!-- Notification starting -->
+    <string name="notification_starting">Запуск\u2026</string>
+
+    <!-- Permissions -->
+    <string name="usage_access_needed">Для обнаружения заблокированных приложений необходим доступ к данным об использовании.</string>
+    <string name="enable_usage_access">Предоставьте доступ к данным об использовании, чтобы видеть часто используемые приложения вверху списка.</string>
+    <string name="enable_usage_access_session">FocusTime необходим доступ к данным об использовании для обнаружения открытия заблокированных приложений. Пожалуйста, включите его в Настройках.</string>
+    <string name="enable_overlay_session">FocusTime необходимо разрешение на отображение поверх других приложений для их блокировки. Пожалуйста, включите его в Настройках.</string>
+    <string name="vpn_permission_needed">Для блокировки URL необходимо разрешение VPN.</string>
+    <string name="notification_permission_needed">Для отображения статуса сессии фокуса необходимо разрешение на уведомления.</string>
+    <string name="overlay_permission_needed">Для блокировки приложений необходимо разрешение на наложение.</string>
+    <string name="grant_permission">Предоставить разрешение</string>
+
+    <!-- VPN Disclosure -->
+    <string name="vpn_disclosure_title">Требуется VPN-подключение</string>
+    <string name="vpn_disclosure_message">Для блокировки отвлекающих сайтов FocusTime создаёт локальное VPN-подключение на вашем устройстве. Это VPN:\n\n\u2022 Перехватывает только DNS-запросы для блокировки выбранных вами сайтов\n\u2022 Работает полностью на вашем устройстве — данные не отправляются на внешние серверы\n\u2022 Не отслеживает, не записывает и не передаёт вашу активность в интернете\n\u2022 Активен только во время сессии фокуса\n\nДалее вам будет предложено подтвердить VPN-подключение.</string>
+    <string name="vpn_disclosure_accept">Понятно, продолжить</string>
+    <string name="vpn_disclosure_decline">Отмена</string>
+
+    <!-- Notification -->
+    <string name="focus_channel_name">Сессия фокуса</string>
+    <string name="focus_channel_description">Показывает статус активной сессии фокуса</string>
+    <string name="notification_title">FocusTime активен</string>
+    <string name="notification_text">Осталось %1$s</string>
+    <string name="notification_monitoring_apps">Отслеживание заблокированных приложений</string>
+
+    <!-- Motivational Quotes -->
+    <string-array name="motivational_quote_texts">
+        <item>Секрет успеха в том, чтобы начать.</item>
+        <item>Сосредоточьтесь на продуктивности, а не на занятости.</item>
+        <item>Именно в самые тёмные моменты нужно сосредоточиться, чтобы увидеть свет.</item>
+        <item>Сконцентрируйте все мысли на работе, которая перед вами.</item>
+        <item>Успешный воин — это обычный человек с лазерной концентрацией.</item>
+        <item>Куда направлен фокус, туда течёт энергия.</item>
+        <item>Делай, что можешь, с тем, что имеешь, там, где ты есть.</item>
+        <item>Единственный способ делать великую работу — любить то, что делаешь.</item>
+        <item>Не нужно быть великим, чтобы начать, но нужно начать, чтобы стать великим.</item>
+        <item>Морите голодом свои отвлечения, питайте свою концентрацию.</item>
+        <item>Почти всё снова работает, если отключить это на несколько минут, включая вас.</item>
+        <item>Ваше будущее создаётся тем, что вы делаете сегодня, а не завтра.</item>
+        <item>Простота — высшая форма изысканности.</item>
+        <item>Глубокая работа — это способность сосредоточиться без отвлечений на когнитивно сложной задаче.</item>
+        <item>Вы никогда не достигнете цели, если будете останавливаться, чтобы бросить камень в каждую лающую собаку.</item>
+    </string-array>
+    <string-array name="motivational_quote_authors">
+        <item>Марк Твен</item>
+        <item>Тим Феррис</item>
+        <item>Аристотель</item>
+        <item>Александр Грейам Белл</item>
+        <item>Брюс Ли</item>
+        <item>Тони Роббинс</item>
+        <item>Теодор Рузвельт</item>
+        <item>Стив Джобс</item>
+        <item>Зиг Зиглар</item>
+        <item>Дэниел Гоулман</item>
+        <item>Энн Ламотт</item>
+        <item>Роберт Кийосаки</item>
+        <item>Леонардо да Винчи</item>
+        <item>Кэл Ньюпорт</item>
+        <item>Уинстон Черчилль</item>
+    </string-array>
+</resources>
