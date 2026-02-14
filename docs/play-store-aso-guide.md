@@ -376,7 +376,637 @@ FocusTime ist ein fokussiertes Einzelzweck-Tool für Menschen, die Deep Work ern
 
 ---
 
-## 2. Keyword & Tag Strategy
+### 1.5 Store Listing Translations (Additional Languages)
+
+> Base: Title Option A, Short Description Option 2, Full Description Version A.
+> "Deep Work" is kept in English for es/fr/pt-rBR/ru (globally recognized term). Transliterated for zh-rCN and hi.
+> In-app terminology is matched exactly for each language.
+
+---
+
+#### 1.5.1 Spanish (es)
+
+**App Title (28 chars):**
+`FocusTime: Deep Work Blocker`
+
+**Short Description (80 chars):**
+`Comprométete con el deep work. Bloquea distracciones, pon un timer, cumple.`
+
+**Full Description:**
+
+```
+Conoces el problema.
+
+Te sientas a hacer trabajo real. Deep work. El tipo de trabajo que hace avanzar las cosas. Entonces tu mano busca el teléfono. Un vistazo rápido se convierte en treinta minutos perdidos.
+
+La fuerza de voluntad no es suficiente. Necesitas un límite.
+
+FocusTime es una herramienta para hacer cumplir tu compromiso. Bloquea las apps y sitios web que elijas, por la duración que establezcas, y no te deja volver hasta que el timer expire. Sin gamificación. Sin rachas. Sin trucos de dopamina. Solo una puerta cerrada entre tú y tus distracciones.
+
+
+▸ ¿POR QUÉ NO USAR SIMPLEMENTE BIENESTAR DIGITAL?
+Las herramientas integradas de Android te dan un empujón suave. FocusTime no empuja. Impone. Cuando inicias una sesión, las apps bloqueadas muestran una pantalla completa de redirección. Los sitios web bloqueados no cargan. La única salida es esperar — o ingresar una contraseña maestra que otra persona tiene.
+
+Esa es la diferencia entre una sugerencia y un compromiso.
+
+
+▸ BLOQUEAR APPS
+Selecciona de todas las apps instaladas o elige entre las más usadas. Cuando abres una app bloqueada durante una sesión, FocusTime la intercepta y te envía de vuelta a la pantalla de inicio. Sin atajos.
+
+▸ BLOQUEAR SITIOS WEB
+Agrega dominios exactos (instagram.com) o usa comodines (*.youtube.com) para bloquear un sitio completo y sus subdominios. El bloqueo de sitios web funciona a través de un VPN local que filtra solicitudes DNS directamente en tu dispositivo. Ningún dato sale de tu teléfono.
+
+▸ SESIONES CON TIMER
+30 minutos. 2 horas. 8 horas. O establece una duración personalizada. Un contador en vivo muestra el tiempo restante. Las sesiones persisten incluso si reinicias tu dispositivo — el compromiso se mantiene.
+
+▸ CONTRASEÑA DE RESPONSABILIDAD
+La función clave. Establece una contraseña maestra y dásela a alguien de confianza — una pareja, un colega, un amigo. Solo el portador de la contraseña puede terminar una sesión antes de tiempo. No puedes anular tu propio compromiso. Ese es el punto.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+CÓMO FUNCIONA
+
+1. Agrega apps y sitios web a tu lista de bloqueo.
+2. Establece una duración de sesión.
+3. Toca "Iniciar Enfoque." El bloqueo comienza inmediatamente.
+4. Trabaja. Cuando intentas abrir una app bloqueada, aparece una pantalla de bloqueo. Cuando visitas un sitio web bloqueado, no carga.
+5. Cuando el timer termina, todo se desbloquea. Ves cuánto tiempo estuviste enfocado.
+
+Con una contraseña maestra establecida, la única forma de terminar antes es ingresando la contraseña. Sin ella, esperas. Eso es compromiso impuesto.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+LO QUE ESTA APP NO ES
+
+• No es un rastreador de hábitos.
+• No es un sistema de recompensas gamificado.
+• No es un reporte de tiempo de pantalla.
+• No es un recordatorio suave para dejar el teléfono.
+
+FocusTime hace una cosa: impone los límites que tú estableces. Cuando la sesión está activa, la puerta está cerrada.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+PRIVACIDAD
+
+FocusTime funciona completamente en tu dispositivo.
+
+• Sin cuenta. Sin registro. Sin inicio de sesión.
+• Sin analíticas. Sin rastreo. Sin anuncios.
+• Ningún dato se recopila, transmite o comparte.
+• El VPN local solo filtra solicitudes DNS para bloquear los sitios web que seleccionaste. No monitorea, registra ni transmite tu actividad de navegación.
+• Las contraseñas se almacenan como hashes seguros de un solo sentido en el dispositivo.
+
+Nada sale de tu teléfono. Nunca.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+PERMISOS EXPLICADOS
+
+FocusTime solo solicita lo que necesita. Cada permiso se explica antes de otorgarlo.
+
+• Acceso de Uso — Detecta qué app está en primer plano para imponer el bloqueo de apps.
+• VPN — Crea un VPN local que filtra DNS en tu dispositivo. Ningún tráfico se enruta externamente.
+• Mostrar sobre otras apps — Muestra la pantalla de bloqueo cuando abres una app bloqueada.
+• Administrador del dispositivo — Protege la sesión activa de interrupciones.
+• Notificaciones — Muestra la cuenta regresiva de la sesión en tu barra de notificaciones.
+• Inicio automático — Reinicia tu sesión si el dispositivo se reinicia.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+HECHO PARA PERSONAS QUE CONSTRUYEN COSAS
+
+FocusTime es para desarrolladores, escritores, fundadores, investigadores — cualquiera cuyo trabajo requiera concentración sostenida. Es deliberadamente simple. Sin exceso de funciones. Sin trucos de engagement. Un solo trabajo: proteger tu tiempo de enfoque.
+
+Si tomas el deep work en serio, esta es la herramienta que te mantiene firme.
+```
+
+---
+
+#### 1.5.2 French (fr)
+
+**App Title (28 chars):**
+`FocusTime: Deep Work Blocker`
+
+**Short Description (79 chars):**
+`Engagez-vous dans le deep work. Bloquez les distractions, lancez un timer.`
+
+**Full Description:**
+
+```
+Vous connaissez le problème.
+
+Vous vous asseyez pour faire du vrai travail. Du deep work. Le genre qui fait avancer les choses. Puis votre main attrape le téléphone. Un coup d'œil rapide se transforme en trente minutes perdues.
+
+La volonté ne suffit pas. Vous avez besoin d'une limite.
+
+FocusTime est un outil d'engagement forcé. Il bloque les apps et sites web que vous choisissez, pour la durée que vous définissez, et ne vous laisse pas revenir tant que le minuteur n'a pas expiré. Pas de gamification. Pas de séries. Pas de pièges à dopamine. Juste une porte fermée entre vous et vos distractions.
+
+
+▸ POURQUOI NE PAS SIMPLEMENT UTILISER BIEN-ÊTRE NUMÉRIQUE ?
+Les outils intégrés d'Android vous poussent doucement. FocusTime ne pousse pas. Il impose. Quand vous démarrez une session, les apps bloquées affichent une redirection plein écran. Les sites web bloqués ne chargent pas. La seule sortie est d'attendre — ou d'entrer un mot de passe maître que quelqu'un d'autre détient.
+
+C'est la différence entre une suggestion et un engagement.
+
+
+▸ BLOQUER DES APPS
+Sélectionnez parmi toutes les apps installées ou choisissez parmi les plus utilisées. Quand vous ouvrez une app bloquée pendant une session, FocusTime l'intercepte et vous renvoie à l'écran d'accueil. Pas de contournement.
+
+▸ BLOQUER DES SITES WEB
+Ajoutez des domaines exacts (instagram.com) ou utilisez des jokers (*.youtube.com) pour bloquer un site entier et ses sous-domaines. Le blocage de sites web fonctionne via un VPN local qui filtre les requêtes DNS directement sur votre appareil. Aucune donnée ne quitte votre téléphone.
+
+▸ SESSIONS MINUTÉES
+30 minutes. 2 heures. 8 heures. Ou définissez une durée personnalisée. Un compte à rebours en direct affiche le temps restant. Les sessions persistent même si vous redémarrez votre appareil — l'engagement tient.
+
+▸ MOT DE PASSE DE RESPONSABILITÉ
+La fonction clé. Définissez un mot de passe maître et confiez-le à une personne de confiance — un partenaire, un collègue, un ami. Seul le détenteur du mot de passe peut mettre fin à une session en avance. Vous ne pouvez pas annuler votre propre engagement. C'est le but.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+COMMENT ÇA MARCHE
+
+1. Ajoutez des apps et sites web à votre liste de blocage.
+2. Définissez une durée de session.
+3. Appuyez sur « Démarrer le focus. » Le blocage commence immédiatement.
+4. Travaillez. Quand vous essayez d'ouvrir une app bloquée, un écran de blocage apparaît. Quand vous visitez un site web bloqué, il ne charge pas.
+5. Quand le minuteur se termine, tout se débloque. Vous voyez combien de temps vous êtes resté concentré.
+
+Avec un mot de passe maître défini, la seule façon de terminer en avance est d'entrer le mot de passe. Sans lui, vous attendez. C'est de l'engagement imposé.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+CE QUE CETTE APP N'EST PAS
+
+• Pas un suivi d'habitudes.
+• Pas un système de récompenses gamifié.
+• Pas un rapport de temps d'écran.
+• Pas un rappel doux de poser votre téléphone.
+
+FocusTime fait une chose : il impose les limites que vous définissez. Quand la session est en cours, la porte est fermée.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+CONFIDENTIALITÉ
+
+FocusTime fonctionne entièrement sur votre appareil.
+
+• Pas de compte. Pas d'inscription. Pas de connexion.
+• Pas d'analytique. Pas de suivi. Pas de publicité.
+• Aucune donnée n'est collectée, transmise ou partagée.
+• Le VPN local filtre uniquement les requêtes DNS pour bloquer les sites web que vous avez sélectionnés. Il ne surveille, n'enregistre ni ne transmet votre activité de navigation.
+• Les mots de passe sont stockés sous forme de hachages sécurisés irréversibles sur l'appareil.
+
+Rien ne quitte votre téléphone. Jamais.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+PERMISSIONS EXPLIQUÉES
+
+FocusTime ne demande que ce dont il a besoin. Chaque permission est expliquée avant d'être accordée.
+
+• Accès aux données d'utilisation — Détecte quelle app est au premier plan pour appliquer le blocage.
+• VPN — Crée un VPN local qui filtre les DNS sur votre appareil. Aucun trafic n'est routé en externe.
+• Afficher par-dessus d'autres apps — Affiche l'écran de blocage quand vous ouvrez une app bloquée.
+• Administrateur de l'appareil — Protège la session active contre les interruptions.
+• Notifications — Affiche le compte à rebours de la session dans votre barre de notifications.
+• Démarrage automatique — Redémarre votre session si l'appareil redémarre.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+CONÇU POUR CEUX QUI CONSTRUISENT
+
+FocusTime est pour les développeurs, les auteurs, les fondateurs, les chercheurs — quiconque dont le travail exige une concentration soutenue. C'est délibérément simple. Pas de surcharge de fonctionnalités. Pas de pièges d'engagement. Un seul job : protéger votre temps de focus.
+
+Si vous prenez le deep work au sérieux, c'est l'outil qui vous y tient.
+```
+
+---
+
+#### 1.5.3 Portuguese — Brazil (pt-rBR)
+
+**App Title (28 chars):**
+`FocusTime: Deep Work Blocker`
+
+**Short Description (78 chars):**
+`Comprometa-se com o deep work. Bloqueie distrações, defina um timer, foque.`
+
+**Full Description:**
+
+```
+Você conhece o problema.
+
+Você senta para fazer trabalho de verdade. Deep work. O tipo que faz as coisas avançarem. Então sua mão pega o celular. Uma olhada rápida vira trinta minutos perdidos.
+
+Força de vontade não é suficiente. Você precisa de um limite.
+
+FocusTime é uma ferramenta para impor compromisso. Bloqueia os apps e sites que você escolher, pela duração que você definir, e não te deixa voltar até o timer expirar. Sem gamificação. Sem sequências. Sem truques de dopamina. Apenas uma porta trancada entre você e suas distrações.
+
+
+▸ POR QUE NÃO USAR O BEM-ESTAR DIGITAL?
+As ferramentas integradas do Android te dão um empurrãozinho. FocusTime não empurra. Impõe. Quando você inicia uma sessão, apps bloqueados mostram uma tela de redirecionamento. Sites bloqueados não carregam. A única saída é esperar — ou digitar uma senha mestra que outra pessoa tem.
+
+Essa é a diferença entre uma sugestão e um compromisso.
+
+
+▸ BLOQUEAR APPS
+Selecione entre todos os apps instalados ou escolha entre os mais usados. Quando você abre um app bloqueado durante uma sessão, FocusTime intercepta e te manda de volta para a tela inicial. Sem atalhos.
+
+▸ BLOQUEAR SITES
+Adicione domínios exatos (instagram.com) ou use curingas (*.youtube.com) para bloquear um site inteiro e seus subdomínios. O bloqueio de sites funciona através de um VPN local que filtra requisições DNS diretamente no seu dispositivo. Nenhum dado sai do seu celular.
+
+▸ SESSÕES COM TIMER
+30 minutos. 2 horas. 8 horas. Ou defina uma duração personalizada. Uma contagem regressiva ao vivo mostra o tempo restante. As sessões persistem mesmo se você reiniciar o dispositivo — o compromisso se mantém.
+
+▸ SENHA DE RESPONSABILIDADE
+A função principal. Defina uma senha mestra e entregue-a a alguém de confiança — um parceiro, um colega, um amigo. Só o portador da senha pode encerrar uma sessão antes do tempo. Você não pode anular seu próprio compromisso. Esse é o ponto.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+COMO FUNCIONA
+
+1. Adicione apps e sites à sua lista de bloqueio.
+2. Defina uma duração de sessão.
+3. Toque em "Iniciar Foco." O bloqueio começa imediatamente.
+4. Trabalhe. Quando você tenta abrir um app bloqueado, uma tela de bloqueio aparece. Quando visita um site bloqueado, ele não carrega.
+5. Quando o timer termina, tudo é desbloqueado. Você vê por quanto tempo ficou focado.
+
+Com uma senha mestra definida, a única forma de terminar antes é digitando a senha. Sem ela, você espera. Isso é compromisso imposto.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+O QUE ESTE APP NÃO É
+
+• Não é um rastreador de hábitos.
+• Não é um sistema de recompensas gamificado.
+• Não é um relatório de tempo de tela.
+• Não é um lembrete gentil para largar o celular.
+
+FocusTime faz uma coisa: impõe os limites que você define. Quando a sessão está ativa, a porta está fechada.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+PRIVACIDADE
+
+FocusTime roda inteiramente no seu dispositivo.
+
+• Sem conta. Sem cadastro. Sem login.
+• Sem analytics. Sem rastreamento. Sem anúncios.
+• Nenhum dado é coletado, transmitido ou compartilhado.
+• O VPN local apenas filtra requisições DNS para bloquear os sites que você selecionou. Não monitora, registra nem transmite sua atividade de navegação.
+• Senhas são armazenadas como hashes seguros de mão única no dispositivo.
+
+Nada sai do seu celular. Nunca.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+PERMISSÕES EXPLICADAS
+
+FocusTime solicita apenas o que precisa. Cada permissão é explicada antes de ser concedida.
+
+• Acesso de Uso — Detecta qual app está em primeiro plano para aplicar o bloqueio.
+• VPN — Cria um VPN local que filtra DNS no seu dispositivo. Nenhum tráfego é roteado externamente.
+• Exibir sobre outros apps — Mostra a tela de bloqueio quando você abre um app bloqueado.
+• Administrador do dispositivo — Protege a sessão ativa contra interrupções.
+• Notificações — Mostra a contagem regressiva da sessão na barra de notificações.
+• Início automático — Reinicia sua sessão se o dispositivo reiniciar.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+FEITO PARA QUEM CONSTRÓI COISAS
+
+FocusTime é para desenvolvedores, escritores, fundadores, pesquisadores — qualquer pessoa cujo trabalho exige concentração sustentada. É deliberadamente simples. Sem excesso de funcionalidades. Sem truques de engajamento. Um trabalho: proteger seu tempo de foco.
+
+Se você leva o deep work a sério, esta é a ferramenta que te mantém firme.
+```
+
+---
+
+#### 1.5.4 Russian (ru)
+
+**App Title (28 chars):**
+`FocusTime: Deep Work Blocker`
+
+**Short Description (79 chars):**
+`Deep work без компромиссов. Блокируйте отвлечения, ставьте таймер, работайте.`
+
+**Full Description:**
+
+```
+Вы знаете проблему.
+
+Вы садитесь за настоящую работу. Deep work. Ту, которая двигает дела вперёд. А потом рука тянется к телефону. Один быстрый взгляд превращается в тридцать потерянных минут.
+
+Силы воли недостаточно. Вам нужна граница.
+
+FocusTime — это инструмент принудительного обязательства. Он блокирует приложения и сайты, которые вы выберете, на указанное время и не пускает вас обратно, пока таймер не истечёт. Никакой геймификации. Никаких серий. Никаких дофаминовых ловушек. Просто закрытая дверь между вами и отвлечениями.
+
+
+▸ ПОЧЕМУ НЕ ПРОСТО ЦИФРОВОЕ БЛАГОПОЛУЧИЕ?
+Встроенные инструменты Android мягко напоминают. FocusTime не напоминает. Он принуждает. Когда вы начинаете сессию, заблокированные приложения показывают полноэкранное перенаправление. Заблокированные сайты не загружаются. Единственный выход — ждать или ввести мастер-пароль, который есть у кого-то другого.
+
+Это разница между предложением и обязательством.
+
+
+▸ БЛОКИРОВКА ПРИЛОЖЕНИЙ
+Выберите из всех установленных приложений или из часто используемых. Когда вы открываете заблокированное приложение во время сессии, FocusTime перехватывает его и возвращает вас на главный экран. Без обходных путей.
+
+▸ БЛОКИРОВКА САЙТОВ
+Добавьте точные домены (instagram.com) или используйте маски (*.youtube.com), чтобы заблокировать весь сайт и его поддомены. Блокировка сайтов работает через локальный VPN, который фильтрует DNS-запросы прямо на вашем устройстве. Никакие данные не покидают ваш телефон.
+
+▸ СЕССИИ С ТАЙМЕРОМ
+30 минут. 2 часа. 8 часов. Или установите свою длительность. Обратный отсчёт в реальном времени показывает оставшееся время. Сессии сохраняются даже после перезагрузки устройства — обязательство держится.
+
+▸ ПАРОЛЬ ОТВЕТСТВЕННОСТИ
+Ключевая функция. Установите мастер-пароль и передайте его человеку, которому доверяете — партнёру, коллеге, другу. Только обладатель пароля может завершить сессию досрочно. Вы не можете отменить собственное обязательство. В этом суть.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+КАК ЭТО РАБОТАЕТ
+
+1. Добавьте приложения и сайты в список блокировки.
+2. Установите длительность сессии.
+3. Нажмите «Начать фокус.» Блокировка начинается немедленно.
+4. Работайте. Когда вы пытаетесь открыть заблокированное приложение, появляется экран блокировки. Когда вы посещаете заблокированный сайт, он не загружается.
+5. Когда таймер заканчивается, всё разблокируется. Вы видите, сколько времени были сосредоточены.
+
+С установленным мастер-паролем единственный способ закончить досрочно — ввести пароль. Без него вы ждёте. Это принудительное обязательство.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ЧЕМ ЭТО ПРИЛОЖЕНИЕ НЕ ЯВЛЯЕТСЯ
+
+• Не трекер привычек.
+• Не геймифицированная система наград.
+• Не отчёт об экранном времени.
+• Не мягкое напоминание убрать телефон.
+
+FocusTime делает одну вещь: принуждает к границам, которые вы установили. Когда сессия идёт, дверь закрыта.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+КОНФИДЕНЦИАЛЬНОСТЬ
+
+FocusTime работает полностью на вашем устройстве.
+
+• Без аккаунта. Без регистрации. Без входа.
+• Без аналитики. Без отслеживания. Без рекламы.
+• Никакие данные не собираются, не передаются и не распространяются.
+• Локальный VPN фильтрует только DNS-запросы для блокировки выбранных вами сайтов. Он не отслеживает, не записывает и не передаёт вашу активность в браузере.
+• Пароли хранятся в виде безопасных односторонних хешей на устройстве.
+
+Ничего не покидает ваш телефон. Никогда.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+РАЗРЕШЕНИЯ
+
+FocusTime запрашивает только то, что необходимо. Каждое разрешение объясняется перед предоставлением.
+
+• Доступ к данным использования — Определяет, какое приложение на переднем плане, для блокировки.
+• VPN — Создаёт локальный VPN для фильтрации DNS на вашем устройстве. Трафик не маршрутизируется наружу.
+• Отображение поверх других приложений — Показывает экран блокировки при открытии заблокированного приложения.
+• Администратор устройства — Защищает активную сессию от прерывания.
+• Уведомления — Показывает обратный отсчёт сессии в панели уведомлений.
+• Автозапуск — Перезапускает сессию при перезагрузке устройства.
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+СОЗДАНО ДЛЯ ТЕХ, КТО СОЗДАЁТ
+
+FocusTime для разработчиков, писателей, основателей, исследователей — для всех, чья работа требует устойчивой концентрации. Намеренно просто. Без раздутого функционала. Без ловушек вовлечения. Одна задача: защитить ваше время фокуса.
+
+Если вы серьёзно относитесь к deep work, это инструмент, который вас удержит.
+```
+
+---
+
+#### 1.5.5 Chinese — Simplified (zh-rCN)
+
+**App Title (25 chars):**
+`FocusTime: 深度工作屏蔽器`
+
+**Short Description (43 chars):**
+`承诺深度工作。屏蔽干扰应用和网站，设定计时器，专注到底。`
+
+**Full Description:**
+
+```
+你知道这个问题。
+
+你坐下来做真正的工作。深度工作。那种推动事情前进的工作。然后你的手伸向了手机。一次快速查看变成了三十分钟的浪费。
+
+意志力不够。你需要一道边界。
+
+FocusTime 是一款承诺执行工具。它屏蔽你选择的应用和网站，在你设定的时间内不让你返回，直到计时器到期。没有游戏化。没有连续打卡。没有多巴胺陷阱。只有一扇关闭的门，挡在你和干扰之间。
+
+
+▸ 为什么不直接用数字健康？
+Android 内置工具只是温和地提醒你。FocusTime 不提醒。它强制执行。当你开始一个专注时段，被屏蔽的应用会显示全屏重定向。被屏蔽的网站不会加载。唯一的出路是等待——或者输入别人持有的主密码。
+
+这就是建议和承诺之间的区别。
+
+
+▸ 屏蔽应用
+从所有已安装的应用中选择，或从最常用的应用中挑选。当你在专注时段打开被屏蔽的应用时，FocusTime 会拦截它并将你送回主屏幕。没有变通方法。
+
+▸ 屏蔽网站
+添加精确域名（instagram.com）或使用通配符（*.youtube.com）来屏蔽整个网站及其子域名。网站屏蔽通过本地 VPN 直接在设备上过滤 DNS 请求。没有数据离开你的手机。
+
+▸ 定时专注时段
+30 分钟。2 小时。8 小时。或设置自定义时长。实时倒计时显示剩余时间。即使重启设备，专注时段仍然有效——承诺不变。
+
+▸ 责任密码
+核心功能。设置一个主密码，交给你信任的人——伴侣、同事、朋友。只有密码持有者才能提前结束专注时段。你无法推翻自己的承诺。这就是意义所在。
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+使用方法
+
+1. 将应用和网站添加到屏蔽列表。
+2. 设定专注时段时长。
+3. 点击「开始专注」。屏蔽立即生效。
+4. 工作。当你尝试打开被屏蔽的应用时，会出现屏蔽界面。当你访问被屏蔽的网站时，它不会加载。
+5. 计时器结束后，一切自动解除屏蔽。你会看到自己专注了多长时间。
+
+设置了主密码后，提前结束的唯一方式是输入密码。没有密码，你只能等。这就是强制承诺。
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+这款应用不是什么
+
+• 不是习惯追踪器。
+• 不是游戏化奖励系统。
+• 不是屏幕时间报告。
+• 不是温柔地提醒你放下手机。
+
+FocusTime 只做一件事：执行你设定的边界。当专注时段进行中，门是关闭的。
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+隐私
+
+FocusTime 完全在你的设备上运行。
+
+• 无账户。无注册。无登录。
+• 无分析。无追踪。无广告。
+• 不收集、不传输、不分享任何数据。
+• 本地 VPN 仅过滤 DNS 请求以屏蔽你选择的网站。它不监控、不记录、不传输你的浏览活动。
+• 密码以安全的单向哈希存储在设备上。
+
+没有任何东西离开你的手机。永远不会。
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+权限说明
+
+FocusTime 只请求必要的权限。每项权限在授予前都会说明。
+
+• 使用情况访问 — 检测前台应用以执行应用屏蔽。
+• VPN — 创建本地 VPN，在设备上过滤 DNS。无流量被路由到外部。
+• 显示在其他应用上方 — 打开被屏蔽应用时显示屏蔽界面。
+• 设备管理员 — 保护活跃的专注时段不被中断。
+• 通知 — 在通知栏显示专注时段倒计时。
+• 开机启动 — 设备重启后恢复专注时段。
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+为创造者而造
+
+FocusTime 面向开发者、作家、创始人、研究人员——所有需要持续专注力的工作者。刻意简洁。没有功能膨胀。没有参与度陷阱。一个任务：保护你的专注时间。
+
+如果你认真对待深度工作，这就是让你坚持到底的工具。
+```
+
+---
+
+#### 1.5.6 Hindi (hi)
+
+**App Title (29 chars):**
+`FocusTime: डीप वर्क ब्लॉकर`
+
+**Short Description (78 chars):**
+`डीप वर्क के लिए प्रतिबद्ध रहें। ऐप्स और साइट्स ब्लॉक करें, टाइमर लगाएं, काम करें।`
+
+**Full Description:**
+
+```
+आप इस समस्या को जानते हैं।
+
+आप बैठते हैं असली काम करने के लिए। डीप वर्क। वो काम जो चीज़ों को आगे बढ़ाता है। फिर आपका हाथ फ़ोन की तरफ़ बढ़ता है। एक छोटी सी नज़र तीस खोए हुए मिनटों में बदल जाती है।
+
+इच्छाशक्ति काफ़ी नहीं है। आपको एक सीमा चाहिए।
+
+FocusTime एक प्रतिबद्धता लागू करने वाला टूल है। यह आपके चुने हुए ऐप्स और वेबसाइट्स को, आपके तय किए हुए समय के लिए ब्लॉक करता है, और टाइमर ख़त्म होने तक आपको वापस नहीं जाने देता। कोई गेमिफ़िकेशन नहीं। कोई स्ट्रीक नहीं। कोई डोपामिन ट्रिक नहीं। बस आपके और आपकी विचलनों के बीच एक बंद दरवाज़ा।
+
+
+▸ डिजिटल वेलबीइंग क्यों नहीं?
+Android के बिल्ट-इन टूल आपको धीरे से याद दिलाते हैं। FocusTime याद नहीं दिलाता। लागू करता है। जब आप एक सेशन शुरू करते हैं, ब्लॉक किए गए ऐप्स फ़ुल-स्क्रीन रीडायरेक्ट दिखाते हैं। ब्लॉक की गई वेबसाइट्स लोड नहीं होतीं। एकमात्र रास्ता है इंतज़ार — या एक मास्टर पासवर्ड डालना जो किसी और के पास है।
+
+यही फ़र्क़ है एक सुझाव और एक प्रतिबद्धता के बीच।
+
+
+▸ ऐप्स ब्लॉक करें
+सभी इंस्टॉल किए ऐप्स में से चुनें या सबसे ज़्यादा इस्तेमाल होने वाले ऐप्स में से चुनें। जब आप सेशन के दौरान ब्लॉक किया हुआ ऐप खोलते हैं, FocusTime उसे रोकता है और आपको होम स्क्रीन पर वापस भेजता है। कोई शॉर्टकट नहीं।
+
+▸ वेबसाइट्स ब्लॉक करें
+सटीक डोमेन जोड़ें (instagram.com) या वाइल्डकार्ड इस्तेमाल करें (*.youtube.com) पूरी साइट और उसके सबडोमेन ब्लॉक करने के लिए। वेबसाइट ब्लॉकिंग एक लोकल VPN के ज़रिए काम करती है जो आपके डिवाइस पर सीधे DNS रिक्वेस्ट फ़िल्टर करता है। कोई डेटा आपके फ़ोन से बाहर नहीं जाता।
+
+▸ टाइमर सेशन
+30 मिनट। 2 घंटे। 8 घंटे। या अपनी कस्टम अवधि सेट करें। एक लाइव काउंटडाउन शेष समय दिखाता है। डिवाइस रीस्टार्ट होने पर भी सेशन बने रहते हैं — प्रतिबद्धता बनी रहती है।
+
+▸ ज़िम्मेदारी पासवर्ड
+मुख्य फ़ीचर। एक मास्टर पासवर्ड सेट करें और इसे किसी भरोसेमंद व्यक्ति को दें — पार्टनर, सहकर्मी, दोस्त। केवल पासवर्ड रखने वाला ही सेशन जल्दी ख़त्म कर सकता है। आप अपनी ख़ुद की प्रतिबद्धता नहीं तोड़ सकते। यही बात है।
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+यह कैसे काम करता है
+
+1. अपनी ब्लॉक लिस्ट में ऐप्स और वेबसाइट्स जोड़ें।
+2. सेशन की अवधि तय करें।
+3. "फ़ोकस शुरू करें" पर टैप करें। ब्लॉकिंग तुरंत शुरू हो जाती है।
+4. काम करें। जब आप ब्लॉक किया ऐप खोलने की कोशिश करते हैं, तो ब्लॉकिंग स्क्रीन दिखती है। जब आप ब्लॉक की गई वेबसाइट पर जाते हैं, वह लोड नहीं होती।
+5. जब टाइमर ख़त्म होता है, सब कुछ अनब्लॉक हो जाता है। आप देखते हैं कि आप कितने समय तक फ़ोकस्ड रहे।
+
+मास्टर पासवर्ड सेट होने पर, जल्दी ख़त्म करने का एकमात्र तरीक़ा पासवर्ड डालना है। इसके बिना, आप इंतज़ार करते हैं। यही है लागू की गई प्रतिबद्धता।
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+यह ऐप क्या नहीं है
+
+• कोई आदत ट्रैकर नहीं।
+• कोई गेमिफ़ाइड रिवॉर्ड सिस्टम नहीं।
+• कोई स्क्रीन टाइम रिपोर्ट नहीं।
+• फ़ोन रखने की कोई नरम याद नहीं।
+
+FocusTime एक काम करता है: आपके तय किए हुए बाउंड्री को लागू करता है। जब सेशन चल रहा है, दरवाज़ा बंद है।
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+गोपनीयता
+
+FocusTime पूरी तरह आपके डिवाइस पर चलता है।
+
+• कोई अकाउंट नहीं। कोई साइन-अप नहीं। कोई लॉगिन नहीं।
+• कोई एनालिटिक्स नहीं। कोई ट्रैकिंग नहीं। कोई विज्ञापन नहीं।
+• कोई डेटा एकत्र, प्रेषित या साझा नहीं किया जाता।
+• लोकल VPN केवल आपके चुने हुए वेबसाइट्स को ब्लॉक करने के लिए DNS रिक्वेस्ट फ़िल्टर करता है। यह आपकी ब्राउज़िंग गतिविधि की निगरानी, लॉग या ट्रांसमिट नहीं करता।
+• पासवर्ड डिवाइस पर सुरक्षित वन-वे हैश के रूप में स्टोर किए जाते हैं।
+
+कुछ भी आपके फ़ोन से बाहर नहीं जाता। कभी नहीं।
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+अनुमतियाँ
+
+FocusTime केवल वही माँगता है जो ज़रूरी है। हर अनुमति देने से पहले समझाई जाती है।
+
+• उपयोग एक्सेस — यह पता लगाता है कि कौन सा ऐप फ़ोरग्राउंड में है, ऐप ब्लॉकिंग लागू करने के लिए।
+• VPN — आपके डिवाइस पर DNS फ़िल्टर करने के लिए एक लोकल VPN बनाता है। कोई ट्रैफ़िक बाहर नहीं जाता।
+• अन्य ऐप्स के ऊपर दिखाएँ — ब्लॉक किया ऐप खोलने पर ब्लॉकिंग स्क्रीन दिखाता है।
+• डिवाइस एडमिन — सक्रिय सेशन को बाधित होने से बचाता है।
+• नोटिफ़िकेशन — नोटिफ़िकेशन बार में सेशन काउंटडाउन दिखाता है।
+• ऑटो स्टार्ट — डिवाइस रीस्टार्ट होने पर सेशन फिर से शुरू करता है।
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+उन लोगों के लिए बनाया गया जो चीज़ें बनाते हैं
+
+FocusTime डेवलपर्स, लेखकों, संस्थापकों, शोधकर्ताओं के लिए है — हर उस व्यक्ति के लिए जिसके काम में निरंतर एकाग्रता चाहिए। जानबूझकर सरल। कोई फ़ीचर ब्लोट नहीं। कोई एंगेजमेंट ट्रिक नहीं। एक काम: आपके फ़ोकस टाइम की रक्षा करना।
+
+अगर आप डीप वर्क को गंभीरता से लेते हैं, तो यह वो टूल है जो आपको टिकाए रखता है।
+```
+
+---
 
 ### 2.1 Category Recommendation
 
