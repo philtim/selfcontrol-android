@@ -169,6 +169,9 @@ class PreferencesManager @Inject constructor(
             prefs[Keys.SESSION_ACTIVE] = false
             prefs.remove(Keys.SESSION_END_TIME)
             prefs.remove(Keys.SESSION_ID)
+            // Auto-remove session password
+            prefs.remove(Keys.MASTER_PASSWORD_HASH)
+            prefs.remove(Keys.MASTER_PASSWORD_SALT)
         }
     }
 

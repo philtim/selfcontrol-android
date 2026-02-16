@@ -38,7 +38,6 @@
     <string name="no_password_has_been_set">No master password has been set</string>
     <string name="unlock">Unlock</string>
     <string name="cancel">Cancel</string>
-    <string name="confirm">Confirm</string>
     <string name="items_summary">%1$d items \u2022 %2$s</string>
 
     <!-- Session Complete -->
@@ -88,24 +87,15 @@
     <string name="settings">Settings</string>
     <string name="master_password">Master Password</string>
     <string name="set_password">Set Password</string>
-    <string name="change_password">Change Password</string>
     <string name="remove_password">Remove Password</string>
-    <string name="confirm_remove_password">Enter your current password to confirm removal.</string>
-    <string name="current_password">Current password</string>
     <string name="new_password">New password</string>
-    <string name="confirm_password">Confirm password</string>
-    <string name="confirm_new_password">Confirm new password</string>
     <string name="password_set_success">Password set successfully</string>
-    <string name="password_changed_success">Password changed successfully</string>
     <string name="password_removed_success">Password removed</string>
-    <string name="passwords_dont_match">Passwords don\'t match</string>
-    <string name="wrong_password">Incorrect password</string>
-    <string name="current_password_incorrect">Current password is incorrect</string>
     <string name="password_too_short">Password must be at least 4 characters</string>
-    <string name="cannot_change_during_session">Cannot change password during an active session</string>
+    <string name="cannot_change_during_session">Cannot set password during an active session</string>
     <string name="cannot_remove_during_session">Cannot remove password during an active session</string>
     <string name="no_password_set">No master password set</string>
-    <string name="password_description">Set a master password to allow unlocking focus sessions early. Share it with someone you trust so you can\'t unlock it yourself.</string>
+    <string name="password_description">Set a session password to control the emergency unlock. Hand your phone to someone you trust to set it, or type something random so you can\'t unlock early. The password is automatically removed when the session ends.</string>
     <string name="password_is_set">Password is set</string>
     <string name="password_session_active_warning">Password settings cannot be changed during an active focus session.</string>
     <string name="hide_password">Hide password</string>

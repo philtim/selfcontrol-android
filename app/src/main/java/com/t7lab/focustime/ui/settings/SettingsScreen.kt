@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,7 +28,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -115,9 +113,8 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.error
                         )
                     } else if (uiState.hasPassword) {
-                        ChangePasswordForm(
-                            onChangePassword = viewModel::changePassword,
-                            onRemovePassword = viewModel::removePassword
+                        PasswordSetSection(
+                            onRemovePassword = { viewModel.removePassword() }
                         )
                     } else {
                         SetPasswordForm(onSetPassword = viewModel::setPassword)
@@ -238,10 +235,9 @@ private fun PasswordTextField(
 
 @Composable
 private fun SetPasswordForm(
-    onSetPassword: (String, String) -> Unit
+    onSetPassword: (String) -> Unit
 ) {
     var newPassword by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         PasswordTextField(
@@ -249,18 +245,12 @@ private fun SetPasswordForm(
             onValueChange = { newPassword = it },
             label = stringResource(R.string.new_password)
         )
-        PasswordTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = stringResource(R.string.confirm_password)
-        )
         Button(
             onClick = {
-                onSetPassword(newPassword, confirmPassword)
+                onSetPassword(newPassword)
                 newPassword = ""
-                confirmPassword = ""
             },
-            enabled = newPassword.isNotEmpty() && confirmPassword.isNotEmpty(),
+            enabled = newPassword.isNotEmpty(),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(R.string.set_password))
@@ -269,15 +259,9 @@ private fun SetPasswordForm(
 }
 
 @Composable
-private fun ChangePasswordForm(
-    onChangePassword: (String, String, String) -> Unit,
-    onRemovePassword: (String) -> Unit
+private fun PasswordSetSection(
+    onRemovePassword: () -> Unit
 ) {
-    var currentPassword by remember { mutableStateOf("") }
-    var newPassword by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var showRemoveDialog by remember { mutableStateOf(false) }
-
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = stringResource(R.string.password_is_set),
@@ -285,109 +269,12 @@ private fun ChangePasswordForm(
             color = MaterialTheme.colorScheme.primary
         )
 
-        PasswordTextField(
-            value = currentPassword,
-            onValueChange = { currentPassword = it },
-            label = stringResource(R.string.current_password)
-        )
-        PasswordTextField(
-            value = newPassword,
-            onValueChange = { newPassword = it },
-            label = stringResource(R.string.new_password)
-        )
-        PasswordTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = stringResource(R.string.confirm_new_password)
-        )
-        Button(
-            onClick = {
-                onChangePassword(currentPassword, newPassword, confirmPassword)
-                currentPassword = ""
-                newPassword = ""
-                confirmPassword = ""
-            },
-            enabled = currentPassword.isNotEmpty() && newPassword.isNotEmpty() && confirmPassword.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.change_password))
-        }
-
         OutlinedButton(
-            onClick = { showRemoveDialog = true },
+            onClick = onRemovePassword,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(R.string.remove_password))
         }
     }
-
-    if (showRemoveDialog) {
-        RemovePasswordDialog(
-            onConfirm = { password ->
-                onRemovePassword(password)
-                showRemoveDialog = false
-            },
-            onDismiss = { showRemoveDialog = false }
-        )
-    }
 }
 
-@Composable
-private fun RemovePasswordDialog(
-    onConfirm: (String) -> Unit,
-    onDismiss: () -> Unit
-) {
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.remove_password)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(R.string.confirm_remove_password))
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text(stringResource(R.string.current_password)) },
-                    visualTransformation = if (passwordVisible) {
-                        VisualTransformation.None
-                    } else {
-                        PasswordVisualTransformation()
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                            Icon(
-                                imageVector = if (passwordVisible) {
-                                    Icons.Default.VisibilityOff
-                                } else {
-                                    Icons.Default.Visibility
-                                },
-                                contentDescription = if (passwordVisible) {
-                                    stringResource(R.string.hide_password)
-                                } else {
-                                    stringResource(R.string.show_password)
-                                }
-                            )
-                        }
-                    },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = { onConfirm(password) },
-                enabled = password.isNotEmpty()
-            ) {
-                Text(stringResource(R.string.confirm))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
-    )
-}

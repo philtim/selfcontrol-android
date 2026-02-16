@@ -43,7 +43,7 @@ class SettingsViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun setPassword(newPassword: String, confirmPassword: String) {
+    fun setPassword(newPassword: String) {
         if (_uiState.value.isSessionActive) {
             _uiState.value = _uiState.value.copy(
                 messageRes = R.string.cannot_change_during_session,
@@ -55,14 +55,6 @@ class SettingsViewModel @Inject constructor(
         if (newPassword.length < 4) {
             _uiState.value = _uiState.value.copy(
                 messageRes = R.string.password_too_short,
-                isError = true
-            )
-            return
-        }
-
-        if (newPassword != confirmPassword) {
-            _uiState.value = _uiState.value.copy(
-                messageRes = R.string.passwords_dont_match,
                 isError = true
             )
             return
@@ -77,49 +69,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun changePassword(currentPassword: String, newPassword: String, confirmPassword: String) {
-        if (_uiState.value.isSessionActive) {
-            _uiState.value = _uiState.value.copy(
-                messageRes = R.string.cannot_change_during_session,
-                isError = true
-            )
-            return
-        }
-
-        if (newPassword.length < 4) {
-            _uiState.value = _uiState.value.copy(
-                messageRes = R.string.password_too_short,
-                isError = true
-            )
-            return
-        }
-
-        if (newPassword != confirmPassword) {
-            _uiState.value = _uiState.value.copy(
-                messageRes = R.string.passwords_dont_match,
-                isError = true
-            )
-            return
-        }
-
-        viewModelScope.launch {
-            if (!preferencesManager.verifyPassword(currentPassword)) {
-                _uiState.value = _uiState.value.copy(
-                    messageRes = R.string.current_password_incorrect,
-                    isError = true
-                )
-                return@launch
-            }
-
-            preferencesManager.setPassword(newPassword)
-            _uiState.value = _uiState.value.copy(
-                messageRes = R.string.password_changed_success,
-                isError = false
-            )
-        }
-    }
-
-    fun removePassword(currentPassword: String) {
+    fun removePassword() {
         if (_uiState.value.isSessionActive) {
             _uiState.value = _uiState.value.copy(
                 messageRes = R.string.cannot_remove_during_session,
@@ -129,14 +79,6 @@ class SettingsViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            if (!preferencesManager.verifyPassword(currentPassword)) {
-                _uiState.value = _uiState.value.copy(
-                    messageRes = R.string.wrong_password,
-                    isError = true
-                )
-                return@launch
-            }
-
             preferencesManager.removePassword()
             _uiState.value = _uiState.value.copy(
                 messageRes = R.string.password_removed_success,
